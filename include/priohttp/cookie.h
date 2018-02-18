@@ -1,0 +1,67 @@
+#ifndef _MOL_DEF_GUARD_DEFINE_MOD_HTTP_REQUEST_COOKIE_DEF_GUARD_
+#define _MOL_DEF_GUARD_DEFINE_MOD_HTTP_REQUEST_COOKIE_DEF_GUARD_
+
+#include "priohttp/common.h"
+
+namespace prio  {
+
+
+class Cookie
+{
+public:
+    Cookie();
+    Cookie(const std::string& name, const std::string& value);
+
+    Cookie& name(const std::string& value);
+    Cookie& value(const std::string& value);    
+    Cookie& expires(const std::string& value);
+    Cookie& maxAge(int seconds);    
+    Cookie& domain(const std::string& value);
+    Cookie& path(const std::string& value);
+    Cookie& secure();
+    
+    std::string name() const;
+    std::string value() const;
+    std::string expires() const;
+    int maxAge() const;
+    std::string domain() const;
+    std::string path() const;    
+    bool isSecure() const;
+        
+    std::string str() const;
+    
+private:
+    std::string name_;
+    std::string value_;
+    std::string expires_;
+    std::string maxAge_;    
+    std::string domain_;
+    std::string path_;
+    bool secure_;
+};
+
+class Cookies
+{
+public:
+
+    Cookie parseCookie(const std::string& txt);
+    std::vector<Cookie>& parse(const std::string& txt);
+
+    bool exists(const std::string& name) const;
+    const Cookie& get(const std::string& name) const;
+    
+    const std::vector<Cookie>& all() const;
+
+    Cookies& add(const Cookie& c) { cookies_.push_back(c); return *this; }
+
+    bool empty() const { return cookies_.empty(); }
+
+    void clear();
+
+private:
+    std::vector<Cookie> cookies_;
+};
+
+} // close namespaces
+
+#endif
