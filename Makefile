@@ -3,7 +3,7 @@ BACKEND=libevent
 DESTDIR=/
 PREFIX=/usr/local
 
-LIBNAME = priocpp
+LIBNAME = priohttp
 LIB = ./lib$(LIBNAME).a
 LIBINC = ./include/priocpp
 
@@ -68,7 +68,7 @@ install: remove  ## installs lib to $(DESTDIR)/$(PREFIX) defaults to /usr/local
 
 remove: ## remove lib from $(DESTDIR)/$(PREFIX) defaults to /usr/local
 	-rm -rf $(DESTDIR)/$(PREFIX)/include/$(LIBNAME)
-	-rm $(DESTDIR)/$(PREFIX)/lib/libpriocpp*.a
+	-rm $(DESTDIR)/$(PREFIX)/lib/libpriohttp*.a
 	-rm $(DESTDIR)/$(PREFIX)/lib/pkgconfig/$(LIBNAME).pc
 	
 
@@ -108,4 +108,4 @@ help:
 	@echo "available targets:"
 	@grep -E -h '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: build help rmi rmc stop bash run image clean-image release remove install test clean test-build
+.PHONY: build help rmi rmc stop bash image clean-image release remove install test clean test-build

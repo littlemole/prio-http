@@ -28,12 +28,12 @@ OPTIONS = -g -fpic -Wno-write-strings -pthread -D_REENTRANT $(DEFAULT_OPTS) $(PK
 CPPFLAGS = -Wall -I../include $(DEBUG) $(OPTIONS) $(PROMISE_IMPL)
 
 # target
-LIB = ../src/build/libpriohttpd.a
-release : override LIB = ../src/build/libpriohtpp.a
+LIB = ../src/build/libpriohttpd.a -lpriocppd
+release : override LIB = ../src/build/libpriohttp.a -lpriocpp
 
 TEST_SRC   = .
 TEST_BUILD = ./build
-TEST_LIBS  = $(LIB) -lpriocppd /usr/lib/libgtest.a -lpthread  $(PKG_LIB) $(PROMISE_3DPARTY) 
+TEST_LIBS  = $(LIB)  /usr/lib/libgtest.a -lpthread  $(PKG_LIB) $(PROMISE_3DPARTY) 
 
 
 # Objects for the test executable
