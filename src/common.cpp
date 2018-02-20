@@ -193,26 +193,6 @@ Http2SslCtxImpl::~Http2SslCtxImpl()
 {
 }
 
-/*
-int next_proto_cb(SSL *ssl, const unsigned char **data,unsigned int *len, void *arg);
-
-#if OPENSSL_VERSION_NUMBER >= 0x10002000L
-int alpn_select_proto_cb(SSL *ssl, const unsigned char **out,
-          unsigned char *outlen, const unsigned char *in,
-		  unsigned int inlen, void *arg);
-#endif
-*/
-/*
-void Http2SslCtxImpl::loadKeys( const std::string& keyfile )
-{
-	if(!(SSL_CTX_use_certificate_chain_file(ctx,	keyfile.c_str())))
-		throw repro::Ex("Can't read certificate file");
-
-	if(!(SSL_CTX_use_PrivateKey_file(ctx,keyfile.c_str(),SSL_FILETYPE_PEM)))
-		throw repro::Ex("Can't read key file");
-	  
-}
-*/
 
 void Http2SslCtxImpl::enableHttp2(  )
 {
@@ -287,6 +267,106 @@ void Http2SslCtx::enableHttp2Client()
 
 #endif // USE_LIBEVENT
 
+
+#ifdef PROMISE_USE_BOOST_ASIO
+
+struct Http2SslCtxImpl : public SslCtxImpl
+{
+	Http2SslCtxImpl();
+	~Http2SslCtxImpl();
+
+    	
+	void enableHttp2();
+	void enableHttp2Client();
+};
+
+
+
+Http2SslCtxImpl::Http2SslCtxImpl()
+{
+}
+
+Http2SslCtxImpl::~Http2SslCtxImpl()
+{
+}
+
+
+void Http2SslCtxImpl::enableHttp2(  )
+{
+    SSL_CTX* sslCtx = ssl.native_handle();
+
+    next_proto_list[0] = NGHTTP2_PROTO_VERSION_ID_LEN;
+    memcpy(&next_proto_list[1], NGHTTP2_PROTO_VERSION_ID,
+    NGHTTP2_PROTO_VERSION_ID_LEN);
+    next_proto_list_len = 1 + NGHTTP2_PROTO_VERSION_ID_LEN;
+    
+    SSL_CTX_set_next_protos_advertised_cb(sslCtx, next_proto_cb, NULL);
+        
+#if OPENSSL_VERSION_NUMBER >= 0x10002000L
+        SSL_CTX_set_alpn_select_cb(sslCtx, alpn_select_proto_cb, NULL);
+#endif // OPENSSL_VERSION_NUMBER >= 0x10002000L
+
+}
+
+static int select_next_proto_cb(SSL *ssl, unsigned char **out,
+	unsigned char *outlen, const unsigned char *in,
+	unsigned int inlen, void *arg) 
+{
+	if (nghttp2_select_next_protocol(out, outlen, in, inlen) <= 0) 
+	{
+		std::cout << "err select_next_proto_cb ACK failed -no http2" << std::endl;
+		return SSL_TLSEXT_ERR_NOACK;
+	}
+	return SSL_TLSEXT_ERR_OK;
+}
+
+void Http2SslCtxImpl::enableHttp2Client(  )
+{
+    SSL_CTX* sslCtx = ssl.native_handle();
+    next_proto_list[0] = NGHTTP2_PROTO_VERSION_ID_LEN;
+    memcpy(&next_proto_list[1], NGHTTP2_PROTO_VERSION_ID,
+    NGHTTP2_PROTO_VERSION_ID_LEN);
+    next_proto_list_len = 1 + NGHTTP2_PROTO_VERSION_ID_LEN;
+
+    SSL_CTX_set_next_proto_select_cb(sslCtx, select_next_proto_cb, NULL);
+        
+#if OPENSSL_VERSION_NUMBER >= 0x10002000L
+          SSL_CTX_set_alpn_protos(sslCtx, (const unsigned char *)"\x02h2", 3);
+#endif // OPENSSL_VERSION_NUMBER >= 0x10002000L 
+}
+
+
+
+Http2SslCtx::Http2SslCtx()
+{
+    ctx.reset(new Http2SslCtxImpl());
+}
+
+Http2SslCtx::~Http2SslCtx()
+{
+}
+
+
+void Http2SslCtx::load_cert_pem(const std::string& file)
+{
+    ctx->ssl.use_certificate_chain_file(file);
+    ctx->ssl.use_private_key_file(file, boost::asio::ssl::context::pem);
+}
+
+
+void Http2SslCtx::enableHttp2()
+{
+	((Http2SslCtxImpl*)(ctx.get()))->enableHttp2();
+}
+
+
+void Http2SslCtx::enableHttp2Client()
+{
+	((Http2SslCtxImpl*)(ctx.get()))->enableHttp2Client();
+}
+
+
+#endif // USE_BOOST_ASIO
 
 
 } // end namespaces
