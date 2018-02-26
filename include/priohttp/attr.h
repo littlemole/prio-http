@@ -9,7 +9,7 @@
 #include <experimental/any>
 #endif
 #else
-#include <any>
+#include <boost/any.hpp>
 #endif
 
 namespace prio  {
@@ -22,7 +22,7 @@ namespace prio  {
 	typedef std::experimental::any any;
 #endif	
 #else
-	typedef std::any any;
+	typedef boost::any any;
 #endif
 
 template<class T>

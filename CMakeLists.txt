@@ -1,5 +1,6 @@
 ############################################
 cmake_minimum_required(VERSION 2.8.9)
+cmake_policy(SET CMP0054 NEW)
 project(priohttp)
 include(CTest)
 
@@ -7,8 +8,12 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+set(INSTALL_DEBUG "On")
+set(INSTALL_RELEASE "On")
+
 find_package(GTest REQUIRED)
 find_package(OpenSSL REQUIRED)
+find_package(ZLIB REQUIRED)
 
 ############################################
 # clang support
@@ -18,7 +23,6 @@ set(LINKERFLAGS "")
 set(STDLIB "")
 set(FLAGS "")
 
-
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(STDLIB "c++abi")
     set(LINKERFLAGS "-stdlib=libc++ -fcoroutines-ts  -std=c++14")
@@ -27,8 +31,6 @@ endif()
 
 set( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${LINKERFLAGS}" )
 
-message(" COMPILER: ${CMAKE_CXX_COMPILER_ID}")
-message(" FLAGS: ${FLAGS}")
 
 ############################################
 # OS support
@@ -39,14 +41,28 @@ IF (WIN32)
 
 	set(OSLIBS "Ws2_32" "Rpcrt4")
 
-	find_library(PRIO_LIBRARY NAMES priocpp)
+	find_library(PRIOCPP_LIBRARY NAMES priocpp)
+	find_library(PRIOCPPD_LIBRARY NAMES priocppd)
 	find_library(NG2HTTP_LIBRARY NAMES nghttp2)
 	find_library(LIBEVENT_LIBRARY NAMES event)
+    find_library(CRYPTONEAT_LIBRARY NAMES cryptoneat)
+    find_library(CRYPTONEATD_LIBRARY NAMES cryptoneatd)
 
 	set(BUILDFLAGS "-await ${FLAGS}")
 	set(DEBUGFLAGS -DMOL_PROMISE_DEBUG)
 
-	set(LIBS ${PRIO_LIBRARY} ${CRYPTONEAT_LIBRARY} ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES} ${NG2HTTP_LIBRARY}  ${STDLIB}  )
+	set(LIBS ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES} ${NG2HTTP_LIBRARY} ${ZLIB_LIBRARIES} ${STDLIB} ${OSLIBS})
+
+	if( "${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+		set(INSTALL_DEBUG "Off")
+		set(LIBS ${CMAKE_PROJECT_NAME} ${PRIOCPP_LIBRARY} ${CRYPTONEAT_LIBRARY} ${LIBS})
+		set(DEBUGFLAGS " ")
+	else()
+		set(INSTALL_RELEASE "Off")
+		set(LIBS ${CMAKE_PROJECT_NAME}d ${PRIOCPPD_LIBRARY} ${CRYPTONEATD_LIBRARY} ${LIBS})
+		set(DEBUGFLAGS "-DMOL_PROMISE_DEBUG ")
+	endif()
+
 
  ELSEIF(UNIX)
 
@@ -56,7 +72,6 @@ IF (WIN32)
     pkg_check_modules(NGHTTP2 REQUIRED libnghttp2)
     pkg_check_modules(PRIOCPP REQUIRED priocpp)
     pkg_check_modules(LIBEVENT REQUIRED libevent_pthreads)
-    pkg_check_modules(ZLIB REQUIRED zlib)
     pkg_check_modules(CRYPTONEAT REQUIRED cryptoneat)
 
 	set(LIBEVENT_LIBRARY ${LIBEVENT_LIBRARIES})
@@ -64,9 +79,8 @@ IF (WIN32)
     set(BUILDFLAGS " ${FLAGS}")
 	set(DEBUGFLAGS "-g -DMOL_PROMISE_DEBUG")
 
-	set(LIBS ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES} ${NGHTTP2_LIBRARIES} ${CRYPTONEAT_LIBRARIES} ${ZLIB_LIBRARIES} ${STDLIB} )
+	set(LIBS ${CMAKE_PROJECT_NAME}d ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES} ${NGHTTP2_LIBRARIES} ${CRYPTONEAT_LIBRARIES} ${ZLIB_LIBRARIES} ${STDLIB} )
 ENDIF ()
-
 
 ############################################
 # macros
@@ -88,9 +102,6 @@ endmacro()
 # defaults
 ############################################
 
-file(GLOB_RECURSE TMPMSG "/usr/local/include/priocpp/impl*.h")
-message("${TMPMSG}")
-
 set(BACKEND ${LIBEVENT_LIBRARY})
 
 option(WITH_LIBEVENT "use libevent (default:on)" ON)
@@ -107,40 +118,35 @@ endif()
 ############################################
 
 include_directories(include)
-include_directories(${OPENSSL_INCLUDE_DIR})
 include_directories(/usr/local/include)
+include_directories(${OPENSSL_INCLUDE_DIR})
 
 file(GLOB SOURCES "src/*.cpp")
-file(GLOB_RECURSE HEADERS "include/priohttp/*.h")
+file(GLOB_RECURSE HEADERS "include/${CMAKE_PROJECT_NAME}/*.h")
 
 ############################################
-# targets
+# library targets
 ############################################
 
-add_library(priohttp  STATIC ${SOURCES})
-add_library(priohttpd STATIC ${SOURCES})
-
-add_executable(Tests t/test.cpp)
-
-AddCompilerFlags(priohttp ${BUILDFLAGS})
-
-AddCompilerFlags(priohttpd ${BUILDFLAGS})
-AddCompilerFlags(priohttpd ${DEBUGFLAGS})
-
-AddCompilerFlags(Tests ${BUILDFLAGS})
-AddCompilerFlags(Tests ${DEBUGFLAGS})
+add_library(${CMAKE_PROJECT_NAME}  STATIC ${SOURCES})
+add_library(${CMAKE_PROJECT_NAME}d STATIC ${SOURCES})
 
 
-############################################
-# libs
-############################################
+AddCompilerFlags(${CMAKE_PROJECT_NAME} ${BUILDFLAGS})
 
-target_link_libraries(Tests priohttpd priocppd ${LIBS} ${BACKEND} ${OSLIBS} )
-
+AddCompilerFlags(${CMAKE_PROJECT_NAME}d ${BUILDFLAGS})
+AddCompilerFlags(${CMAKE_PROJECT_NAME}d ${DEBUGFLAGS})
 
 ############################################
 # tests
 ############################################
+
+add_executable(Tests t/test.cpp)
+
+AddCompilerFlags(Tests ${BUILDFLAGS})
+AddCompilerFlags(Tests ${DEBUGFLAGS})
+
+target_link_libraries(Tests ${LIBS} ${BACKEND} )
 
 add_test(NAME AllTests COMMAND Tests)
 
@@ -150,9 +156,16 @@ file(COPY pem DESTINATION .)
 # install rules
 ############################################
  
-install(TARGETS priohttp DESTINATION lib)
-install(TARGETS priohttpd DESTINATION lib)
+if( "${INSTALL_RELEASE}" STREQUAL "On")
+	install(TARGETS ${CMAKE_PROJECT_NAME} DESTINATION lib)
+endif()
 
-install(DIRECTORY include/priohttp DESTINATION include)
+if( "${INSTALL_DEBUG}" STREQUAL "On")
+	install(TARGETS ${CMAKE_PROJECT_NAME}d DESTINATION lib)
+endif()
 
-install(FILES priohttp.pc DESTINATION lib/pkgconfig)
+
+install(FILES ${HEADERS} DESTINATION include/${CMAKE_PROJECT_NAME})
+
+install(FILES ${CMAKE_PROJECT_NAME}.pc DESTINATION lib/pkgconfig)
+

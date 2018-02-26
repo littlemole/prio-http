@@ -1,8 +1,5 @@
 #include <sstream>
 #include <fstream>
-#include <openssl/ssl.h>
-
-
 
 #ifndef _WIN32
 #include <dirent.h>
@@ -30,6 +27,8 @@ typedef int ssize_t;
 #include <nghttp2/nghttp2.h>
 #include "priocpp/impl/event.h"
 #include "priocpp/impl/asio.h"
+
+#include <openssl/ssl.h>
 
 namespace prio  {
 
