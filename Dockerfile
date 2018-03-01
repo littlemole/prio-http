@@ -51,5 +51,5 @@ RUN /usr/local/bin/install.sh prio
 RUN mkdir -p /usr/local/src/priohttp
 ADD . /usr/local/src/priohttp
 
-RUN /usr/local/bin/build.sh priohttp 
+RUN SKIPTESTS=true /usr/local/bin/build.sh priohttp 
 
