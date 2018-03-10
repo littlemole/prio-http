@@ -10,7 +10,7 @@ cd /usr/local/src/$1
 
 if [ "$BUILDCHAIN" == "make" ] 
 then
-    if [ "$SKIPTESTS" == "true"]
+    if [ "$SKIPTESTS" != "true"]
     then    
         make clean
         make -e test
