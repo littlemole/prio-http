@@ -186,6 +186,7 @@ struct Http2SslCtxImpl : public SslCtxImpl
 
 Http2SslCtxImpl::Http2SslCtxImpl()
 {
+
 }
 
 Http2SslCtxImpl::~Http2SslCtxImpl()
@@ -283,6 +284,10 @@ struct Http2SslCtxImpl : public SslCtxImpl
 
 Http2SslCtxImpl::Http2SslCtxImpl()
 {
+	ssl.set_options(
+        	boost::asio::ssl::context::default_workarounds
+	      | boost::asio::ssl::context::no_sslv2
+        );
 }
 
 Http2SslCtxImpl::~Http2SslCtxImpl()
