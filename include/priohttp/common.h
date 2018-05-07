@@ -21,7 +21,6 @@ std::vector<std::string> glob (const std::string& f);
 //////////////////////////////////////////////////////////////
 
 std::string safe_path( const std::string& path );
-std::string realpath(const std::string& path);
 std::string slurp( const std::string& fp );
 
 //////////////////////////////////////////////////////////////

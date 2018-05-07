@@ -113,14 +113,6 @@ std::string safe_path( const std::string& path )
     return std::regex_replace(path,e,"");
 }
 
-#ifndef _WIN32
-std::string realpath(const std::string& path)
-{
-	char buf[PATH_MAX];
-	::realpath(path.c_str(),buf);
-	return buf;
-}
-#endif
 
 std::string slurp( const std::string& fp )
 {
