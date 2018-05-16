@@ -96,7 +96,9 @@ message("+++++++++++++++++")
     set(LIBEVENT_LIBRARY ${LIBEVENT_LIBRARIES})
 
     set(BUILDFLAGS " ${FLAGS}")
-
+message("+++++++++++++++++")
+message("${NGHTTP2}")
+message("+++++++++++++++++")
     set(LIBS debug priocpp optimized priocpp ${CRYPTONEAT_LIBRARIES} ${GTEST_LIBRARIES} ${NG2HTTP_LIBRARY} ${OPENSSL_LIBRARIES} z ${STDLIB}  )
 message("+++++++++++++++++")
 message("${LIBS}")
