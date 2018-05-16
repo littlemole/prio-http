@@ -97,7 +97,7 @@ message("+++++++++++++++++")
 
     set(BUILDFLAGS " ${FLAGS}")
 
-    set(LIBS debug priocpp optimized priocpp ${CRYPTONEAT_LIBRARIES} ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES} ${NG2HTTP_LIBRARIES} ${STDLIB}  )
+    set(LIBS debug priocpp optimized priocpp ${CRYPTONEAT_LIBRARIES} ${GTEST_LIBRARIES} ${NG2HTTP_LIBRARY} ${OPENSSL_LIBRARIES} z ${STDLIB}  )
 message("+++++++++++++++++")
 message("${LIBS}")
 message("+++++++++++++++++")
