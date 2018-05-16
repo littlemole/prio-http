@@ -98,7 +98,9 @@ message("+++++++++++++++++")
     set(BUILDFLAGS " ${FLAGS}")
 
     set(LIBS debug priocpp optimized priocpp ${CRYPTONEAT_LIBRARIES} ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES} ${NG2HTTP_LIBRARIES} ${STDLIB}  )
-
+message("+++++++++++++++++")
+message("$LIBS")
+message("+++++++++++++++++")
     set(LIBS debug ${CMAKE_PROJECT_NAME} optimized ${CMAKE_PROJECT_NAME} ${LIBS} )
 
 ENDIF ()
