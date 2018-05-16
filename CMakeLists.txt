@@ -104,7 +104,7 @@ message("+++++++++++++++++")
 message("+++++++++++++++++")
 message("${LIBS}")
 message("+++++++++++++++++")
-    set(LIBS debug ${CMAKE_PROJECT_NAME} optimized ${CMAKE_PROJECT_NAME} ${LIBS} )
+    set(LIBS debug ${CMAKE_PROJECT_NAME}d optimized ${CMAKE_PROJECT_NAME} ${LIBS} )
 
 ENDIF ()
 
