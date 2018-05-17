@@ -68,15 +68,23 @@ message("+++++++++++++++++")
 
 	if(${CMAKE_BUILD_TYPE} MATCHES "Release")
 			find_library(PRIOCPP_LIBRARY NAMES priocpp)
+			find_library(ZLIB_LIBRARY NAMES zlib)
  		    find_library(CRYPTONEAT_LIBRARY NAMES cryptoneat)
-			set(LIBS ${LIBS} debug ${CMAKE_PROJECT_NAME} optimized ${CMAKE_PROJECT_NAME} ${PRIOCPP_LIBRARY} ${CRYPTONEAT_LIBRARY} )
+			set(LIBS ${LIBS} debug ${CMAKE_PROJECT_NAME} optimized ${CMAKE_PROJECT_NAME} ${PRIOCPP_LIBRARY} ${CRYPTONEAT_LIBRARY} ${ZLIB_LIBRARY} )
     else()
     	find_library(PRIOCPP_LIBRARY NAMES priocpp.lib)
     	find_library(PRIOCPPD_LIBRARY NAMES priocppd.lib)
 		find_library(CRYPTONEAT_LIBRARY NAMES cryptoneat)
 		find_library(CRYPTONEATD_LIBRARY NAMES cryptoneatd)
+		find_library(ZLIB_LIBRARY NAMES zlib)
+		find_library(ZLIBD_LIBRARY NAMES zlibd)
 
-		set(LIBS ${LIBS} debug ${CMAKE_PROJECT_NAME} optimized ${CMAKE_PROJECT_NAME} debug ${PRIOCPPD_LIBRARY} optimized  ${PRIOCPP_LIBRARY} debug ${CRYPTONEATD_LIBRARY} optimized ${CRYPTONEAT_LIBRARY} )
+		set(LIBS ${LIBS} 
+				debug ${CMAKE_PROJECT_NAME} optimized ${CMAKE_PROJECT_NAME} 
+				debug ${PRIOCPPD_LIBRARY} optimized  ${PRIOCPP_LIBRARY} 
+				debug ${CRYPTONEATD_LIBRARY} optimized ${CRYPTONEAT_LIBRARY} 
+				debug ${ZLIBD_LIBRARY} optimized ${ZLIB_LIBRARY}  
+		)
 	endif()
 
 message("+++++++++++++++++")
