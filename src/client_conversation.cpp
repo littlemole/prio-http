@@ -165,7 +165,6 @@ void ClientHttpHeaderReader::consume(const std::string& s)
 {
     headers_stream_.append( s );
 
-
     size_t pos = headers_stream_.find("\r\n\r\n");
     if ( pos != std::string::npos)
     {
@@ -580,15 +579,12 @@ Connection::Ptr HttpClientConversation::con()
 
 Http2ClientConversation::Http2ClientConversation(Connection::Ptr client,Request& req)
 	: req(req),
-	//res(0),
 	con_(client),
 	promise_(repro::promise<Request&,Response&>()),
 	keep_alive_(false),
 	http2_(new http2_client_session(this))
 {
-	//reader_.reset( new ClientHttpHeaderReader(this));
 	LITTLE_MOLE_ADDREF_DEBUG_REF_CNT(client_connections);
-
 }
 
 Http2ClientConversation::~Http2ClientConversation()
@@ -602,23 +598,16 @@ Http2ClientConversation::FutureType Http2ClientConversation::on(Connection::Ptr 
 	auto r = Ptr(con);
 	r->self_ = r;
 
-	std::cout << "on" << std::endl;
-	
-
 	r->http2_->initialize_nghttp2_session();
     r->http2_->send_connection_header();
     r->http2_->send()
     .then([r]()
-    {
-		std::cout << "before flush" << std::endl;
-		
+    {		
 		r->http2_->flush(r->req);
 		return r->http2_->send();
 	})		
     .then([r]()
     {
-		std::cout << "start reading" << std::endl;
-		
 		r->schedule_read();
     })
     .otherwise([r](const std::exception& ex)
@@ -630,18 +619,13 @@ Http2ClientConversation::FutureType Http2ClientConversation::on(Connection::Ptr 
 }
 
 void Http2ClientConversation::resolve(Request& req, Response& res)
-{ 
-	std::cout << "resolve" << std::endl;
-	
+{ 	
     promise_.resolve(req,res);
 }
 
 void Http2ClientConversation::schedule_read()
 {
 	auto ptr = shared_from_this();
-	
-	std::cout << "schedule read" << std::endl;
-	
 
     con_->read()
     .then([ptr](Connection::Ptr,std::string s)
@@ -710,7 +694,6 @@ void Http2ClientConversation::onResponseComplete(const std::string& b)
 
 void Http2ClientConversation::onRequestError(const std::exception& ex)
 {
-	std::cout << "error: " << ex.what() << std::endl;
 	promise_.reject(ex);
 	self_.reset();
 }

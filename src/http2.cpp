@@ -25,9 +25,7 @@ http2_stream::http2_stream(Request& request,Conversation* con)
     res(0),
     stream_id(0),
     written(0)          
-{
-    std::cout << "new http2_client_stream" << std::endl;
-}
+{}
 
 void http2_stream::reset()
 {
@@ -41,12 +39,10 @@ void http2_stream::reset()
 
 http2_server_stream::http2_server_stream(int32_t id,Conversation* con)
     : http2_stream(id,con)
-{
-}
+{}
 
 http2_server_stream::~http2_server_stream()
-{
-}
+{}
 
 int http2_server_stream::on_header_callback(
     const nghttp2_frame *frame, 

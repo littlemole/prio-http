@@ -16,14 +16,10 @@ namespace prio  {
 
 http2_client_stream::http2_client_stream(Request& request,Conversation* con)
     : http2_stream(request,con)
-{
-    std::cout << "new http2_client_stream" << std::endl;
-}
+{}
 
 http2_client_stream::~http2_client_stream()
-{
-    std::cout << "~http2_client_stream" << std::endl;
-}
+{}
 
 int http2_client_stream::on_header_callback(
     const nghttp2_frame *frame, 
@@ -53,9 +49,7 @@ int http2_client_stream::on_header_callback(
             continue;
         if ( memcmp(pseudo_headers[i],name,namelen)!=0 ) 
             continue;
-
-        std::cout << "status" << (char*)value << std::endl;
-            
+           
         pseudo_handlers[i](response,(char*)value);
         return 0;
     }
@@ -72,12 +66,9 @@ int http2_client_stream::data_chunk_recv_callback(
     const uint8_t *data, 
     size_t len) 
 {
-    std::cout << "data_chunk_recv_callback size " << len << std::endl;
-
     if(len==0)
         return 0;
-
-        
+       
     oss.write((char*)data,len);
     return 0;
 }    
@@ -90,16 +81,12 @@ ssize_t http2_client_stream::data_provider_callback(
     size_t want = req.body().size() - written;
     if(want > length) want = length;
 
-    std::cout << "data_provider_callback want " << want << std::endl;
-    
-
     memcpy( buf, req.body().data() + written, want );
 
     written += want;
 
     if ( written >= req.body().size())
     {                    
-        std::cout << "data_provider_callback done " << std::endl;
         *data_flags |= NGHTTP2_DATA_FLAG_EOF;
     }
     return want;
@@ -124,7 +111,6 @@ int http2_client_session::on_header_callback(
     size_t valuelen, 
     uint8_t flags) 
 {
-    std::cout << "on_header_callback" << std::endl;
     switch (frame->hd.type) 
     {
         case NGHTTP2_HEADERS:
@@ -151,21 +137,17 @@ int http2_client_session::on_header_callback(
 // called when stream is first started
 int http2_client_session::on_begin_headers_callback(const nghttp2_frame *frame) 
 {
-    std::cout << "on_begin_headers_callback" << std::endl;
-    
     return 0;
 }
 
 // an http2 frame has been received. check if request is complete.
 int http2_client_session::on_frame_recv_callback(const nghttp2_frame *frame) 
 {
-    std::cout << "on_frame_recv_callback" << std::endl;
     switch (frame->hd.type) 
     {
         case NGHTTP2_DATA:
         case NGHTTP2_HEADERS:
         {        
-            std::cout << "NGHTTP2_HEADERS" << std::endl;
             // look for stream EOF
             if (frame->hd.flags & NGHTTP2_FLAG_END_STREAM) 
             {
@@ -189,9 +171,7 @@ int http2_client_session::on_frame_recv_callback(const nghttp2_frame *frame)
 // http2 request has been completely received
 // prepare and call the user supplied http handler.
 int http2_client_session::on_request_recv(http2_stream* stream) 
-{
-    std::cout << "on_request_recv" << std::endl;
-    
+{    
     HttpResponse& res = (HttpResponse&)(stream->res);
 
     // set response body
@@ -215,9 +195,7 @@ ssize_t data_provider_callback(
 
 
 http2_client_stream* http2_client_session::flush(Request& req)
-{        
-    std::cout << "flush req" << std::endl;
-    
+{            
     auto stream = std::make_shared<http2_client_stream>(req,con_);
 
     streams_.insert(stream);
@@ -298,11 +276,6 @@ http2_client_stream* http2_client_session::flush(Request& req)
         );    
     }
 
-    for ( auto& h : hdrs )
-    {
-        std::cout << "RH: " << (char*)(h.name) << " " << (char*)(h.value) << std::endl;
-    }
-
     // prepare post data if any
     nghttp2_data_provider* pdata = NULL;
 
@@ -320,16 +293,12 @@ http2_client_stream* http2_client_session::flush(Request& req)
     int stream_id = nghttp2_submit_request(session_, NULL, &hdrs[0], hdrs.size(), pdata, stream.get());
     if (stream_id < 0) 
     {
-        std::cout << "flush failed" << std::endl;
-        
        return 0;
     }
 
     // have valid stream, associate it for later 
     stream->stream_id = stream_id;
     nghttp2_session_set_stream_user_data(session_, stream_id,stream.get());    
-
-    std::cout << "flush stream id: " << stream_id << std::endl;
     
     return stream.get();
 }
