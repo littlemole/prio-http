@@ -157,6 +157,7 @@ TEST_F(BasicTest, HeaderReader)
 	HttpHeaderReader hr(&spy);
 	hr.consume("");
 
+	signal(SIGINT).then([](int s) { theLoop().exit(); });
 	theLoop().run();
 
 	EXPECT_STREQ("/path",path.c_str());
@@ -179,6 +180,7 @@ TEST_F(BasicTest, BodyReader)
 	HttpContentLengthBodyReader br(&spy);
 	br.consume("12345");
 
+	signal(SIGINT).then([](int s) { theLoop().exit(); });
 	theLoop().run();
 
 	EXPECT_STREQ("1234567890",body.c_str());
@@ -196,6 +198,7 @@ TEST_F(BasicTest, BodyWriter)
 	HttpPlainBodyWriter br(&spy);
 	br.flush();
 
+	signal(SIGINT).then([](int s) { theLoop().exit(); });
 	theLoop().run();
 
 	EXPECT_STREQ("HTTP/1.1 200 OK\r\ncontent-type:text/html\r\nContent-Length:10\r\n\r\n0123456789",spy.written.c_str());
@@ -214,6 +217,7 @@ TEST_F(BasicTest, GzipBodyWriter)
 	HttpGzippedBodyWriter gz(br);
 	gz.flush();
 
+	signal(SIGINT).then([](int s) { theLoop().exit(); });
 	theLoop().run();
 
 	EXPECT_STREQ("HTTP/1.1 200 OK\r\ncontent-type:text/html\r\nContent-Length:10\r\nCONTENT-ENCODING:gzip\r\n\r\n\x1F\x8B\b",spy.written.c_str());
@@ -234,6 +238,7 @@ TEST_F(BasicTest, ChunkedBodyWriter)
 	br.write("b chunk");
 	br.flush();
 
+	signal(SIGINT).then([](int s) { theLoop().exit(); });
 	theLoop().run();
 
 	EXPECT_STREQ("HTTP/1.1 200 OK\r\ncontent-type:text/html\r\nTRANSFER-ENCODING:chunked\r\n\r\n7\r\na chunk\r\n7\r\nb chunk\r\n0\r\n\r\n",spy.written.c_str());
@@ -255,6 +260,8 @@ TEST_F(BasicTest, GzipChunkedBodyWriter)
 	gz.write("a chunk");
 	gz.write("b chunk");
 	gz.flush();
+
+	signal(SIGINT).then([](int s) { theLoop().exit(); });
 	theLoop().run();
 
 	EXPECT_STREQ( "HTTP/1.1 200 OK\r\ncontent-type:text/html\r\nTRANSFER-ENCODING:chunked\r\nCONTENT-ENCODING:gzip\r\n\r\na\r\n\x1F\x8B\b\0\0\0\0\0\0\x3\r\n13\r\nKTH\xCE(\xCD\xCBN\x82P\0&\xE3-\x87\xE\0\0\0\r\n0\r\n\r\n", spy.written.c_str());
