@@ -71,6 +71,17 @@ public:
         return headers_;
     }
 
+    Headers()
+    {}
+
+    Headers(const std::vector<std::pair<std::string,std::string>>& h)
+    {
+        for ( auto& it : h)
+        {
+            set(it.first,it.second);
+        }
+    }
+
 private:
 
     std::vector<std::pair<std::string,std::string>> headers_;
