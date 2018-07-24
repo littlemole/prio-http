@@ -42,8 +42,8 @@ public:
 	virtual void onRequestComplete(const std::string& s)  = 0;
 	virtual void onResponseComplete(const std::string& s) = 0;
 
-	virtual Future<std::string> read() = 0;
-	virtual Future<> write(const std::string& s) = 0;
+	virtual repro::Future<std::string> read() = 0;
+	virtual repro::Future<> write(const std::string& s) = 0;
 
 	virtual Request& request() = 0;
 	virtual Response& response() = 0;
@@ -55,7 +55,7 @@ public:
 
 	typedef std::shared_ptr<HttpConversation> Ptr;
 	typedef repro::Promise<Request&,Response&> PromiseType;
-	typedef Future<Request&,Response&> FutureType;
+	typedef repro::Future<Request&,Response&> FutureType;
 
 	Request req;
 	Response res;
@@ -77,8 +77,8 @@ public:
 
 	virtual Request& request() { return req; }
 	virtual Response& response() { return res; }
-	virtual Future<std::string> read();
-	virtual Future<> write(const std::string& s);
+	virtual repro::Future<std::string> read();
+	virtual repro::Future<> write(const std::string& s);
 	virtual void resolve(Request& req, Response& res);
 	
 private:

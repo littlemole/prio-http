@@ -26,10 +26,10 @@ public:
 	static HttpClient::Ptr url(const std::string& url);
 	static HttpClient::Ptr url(prio::SslCtx& ctx,const std::string& url);
 
-	Future<Response&> GET();
-	Future<Response&> POST(const std::string& body);
-	Future<Response&> PUT( const std::string& body);
-	Future<Response&> DEL();
+	repro::Future<Response&> GET();
+	repro::Future<Response&> POST(const std::string& body);
+	repro::Future<Response&> PUT( const std::string& body);
+	repro::Future<Response&> DEL();
 
 	HttpClient::Ptr header(const std::string& h, const std::string& v);
 	HttpClient::Ptr accept(const std::string& v);
@@ -39,7 +39,7 @@ public:
 	HttpClient::Ptr body(const std::string& v);
 	HttpClient::Ptr keepAlive(bool b);
 
-	Future<Response&> fetch();
+	repro::Future<Response&> fetch();
 
 private:
 

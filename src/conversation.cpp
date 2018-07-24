@@ -4,6 +4,8 @@
 #include "priohttp/server/reader.h"
 #include "priohttp/server/writer.h"
 
+using namespace repro;
+
 namespace prio  {
 
 LITTLE_MOLE_DECLARE_DEBUG_REF_CNT(server_connections);

@@ -532,7 +532,7 @@ void HttpClientConversation::onRequestComplete(const std::string& b)
 }
 
 
-Future<std::string> HttpClientConversation::read()
+repro::Future<std::string> HttpClientConversation::read()
 {
 	auto p = repro::promise<std::string>();
 
@@ -549,7 +549,7 @@ Future<std::string> HttpClientConversation::read()
 	return p.future();
 }
 
-Future<> HttpClientConversation::write(const std::string& s)
+repro::Future<> HttpClientConversation::write(const std::string& s)
 {
 	auto p = repro::promise<>();
 

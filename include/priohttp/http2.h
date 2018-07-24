@@ -88,8 +88,8 @@ public:
     http2_session(Conversation* c);
     virtual ~http2_session();
 
-    Future<> send();
-    Future<> recv(const std::string& s);
+    repro::Future<> send();
+    repro::Future<> recv(const std::string& s);
 
     void initialize_nghttp2_session();
     int send_connection_header();

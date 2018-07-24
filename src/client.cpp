@@ -4,6 +4,8 @@
 #include "priocpp/connection.h"
 #include "priocpp/ssl_connection.h"
 
+using namespace repro;
+
 namespace prio  {
 
 
