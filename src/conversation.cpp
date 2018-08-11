@@ -201,5 +201,71 @@ bool HttpConversation::keepAlive()
 }
 
 
+////////////////
+
+
+SubRequest::SubRequest()
+	: req(this),
+	  res(this),
+	  promise_(repro::promise<Request&,Response&>()),
+	  completion_func_( [](Request&,Response&){})
+{
+}
+ 
+SubRequest::~SubRequest()
+{
+}
+
+SubRequest::FutureType SubRequest::on(const Request& request, const std::string& path)
+{
+	req.path = request.path;
+	req.headers = request.headers;
+	req.path.path(path);
+	self_ = shared_from_this();
+
+	return promise_.future();
+}
+
+
+void SubRequest::resolve(Request& req, Response& res)
+{ 
+    promise_.resolve(req,res);
+}
+
+void SubRequest::flush(Response& res)
+{
+	resolve(req,res);
+	completion_func_(req,res);
+	self_.reset();
+}
+
+void SubRequest::chunk(const std::string& ch)
+{
+	res.body(res.body()+ ch);
+}
+
+void SubRequest::onRequestError(const std::exception& ex)
+{
+	promise_.reject(ex);
+	self_.reset();
+}
+
+Connection::Ptr SubRequest::con()
+{
+	Connection::Ptr empty;
+	return empty;
+}
+
+void SubRequest::onFlush(std::function<void(Request& req, Response& res)> f)
+{
+	completion_func_ = f;
+}
+
+bool SubRequest::keepAlive()
+{
+	return false;
+}
+
+
 } // close namespaces
 

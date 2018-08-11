@@ -103,6 +103,45 @@ private:
 	Ptr self_;
 };
 
+class SubRequest : public Conversation, public std::enable_shared_from_this<SubRequest>
+{
+public:
+
+	typedef std::shared_ptr<SubRequest> Ptr;
+	typedef repro::Promise<Request&,Response&> PromiseType;
+	typedef repro::Future<Request&,Response&> FutureType;
+
+	Request req;
+	Response res;
+
+	FutureType on(const Request& request, const std::string& path);
+
+	SubRequest();
+    ~SubRequest() noexcept;
+
+	virtual void flush(Response& res);
+    virtual void onFlush(std::function<void(Request& req, Response& res)> f);
+	virtual void chunk(const std::string& ch);
+	virtual bool keepAlive();
+	virtual Connection::Ptr con();
+
+	virtual void onRequestError(const std::exception& s);
+	virtual void resolve(Request& req, Response& res);
+	
+private:
+
+	SubRequest(const SubRequest& rhs) = delete;
+	SubRequest(SubRequest&& rhs) = delete;
+	SubRequest& operator=(const SubRequest& rhs) = delete;
+	SubRequest& operator=(SubRequest&& rhs) = delete;
+
+	PromiseType promise_;
+
+	std::function<void(Request& req, Response& res)> completion_func_;
+
+	Ptr self_;
+};
+
 //////////////////////////////////////////////////////////////
 
 } // close namespaces
