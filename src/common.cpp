@@ -54,7 +54,7 @@ std::string real_path( const std::string& path )
 #else
     char buf[PATH_MAX];
     realpath(path.c_str(), buf);
-    
+
     std::string result(buf);
     return result;
 #endif   
@@ -71,6 +71,11 @@ std::string get_executable_dir()
     char buf[PATH_MAX];
     readlink("/proc/self/exe", buf, PATH_MAX);
     std::string result(buf);
+    size_t pos = result.find_last_of("/");
+    if(pos != std::string::npos)
+    {
+        return result.substr(0,pos);
+    }
     return result;
 #endif    
 }
