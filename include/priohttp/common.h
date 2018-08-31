@@ -11,7 +11,11 @@
 
 namespace prio  {
 
+std::string unescape_html( const std::string& str );
+std::string escape_html(const std::string& in );
 
+std::string get_executable_dir();
+void set_current_work_dir(const std::string& path);
 
 std::vector<std::string> split(const std::string &s, char delim, std::vector<std::string> &elems);
 std::vector<std::string> split(const std::string &s, char delim);
@@ -20,6 +24,7 @@ std::vector<std::string> glob (const std::string& f);
 
 //////////////////////////////////////////////////////////////
 
+std::string real_path( const std::string& str );
 std::string safe_path( const std::string& path );
 std::string slurp( const std::string& fp );
 

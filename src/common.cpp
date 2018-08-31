@@ -30,7 +30,128 @@ typedef int ssize_t;
 
 #include <openssl/ssl.h>
 
+#ifdef _WIN32
+#include <direct.h>
+#include <pathcch.h>
+#else
+#include <unistd.h>
+#endif    
+
+
 namespace prio  {
+
+std::string real_path( const std::string& path )
+{
+#ifdef _WIN32
+    char buf[MAX_PATH];
+    GetFullPathNameA(_path.c_str(), MAX_PATH, buf, NULL);
+
+    char canonical[MAX_PATH];
+    PathCanonicalizeA(canonical,buf);
+
+    std::string result(canonical);
+    return result;
+#else
+    char buf[PATH_MAX];
+    realpath(path.c_str(), buf);
+    
+    std::string result(buf);
+    return result;
+#endif   
+}
+
+std::string get_executable_dir()
+{
+#ifdef _WIN32
+    char buf[MAX_PATH];
+    GetModuleFileName( NULL, buf, MAX_PATH);
+    std::string result(buf);
+    return result;
+#else
+    char buf[PATH_MAX];
+    readlink("/proc/self/exe", buf, PATH_MAX);
+    std::string result(buf);
+    return result;
+#endif    
+}
+
+void set_current_work_dir(const std::string& path)
+{
+#ifdef _WIN32
+    _chdir(path.c_str());
+#else
+    chdir(path.c_str());
+#endif    
+}
+
+std::string escape_html(const std::string& in )
+{
+    std::ostringstream out;
+    size_t p = 0;
+    size_t len = in.size();
+    while( ( p < len ) )
+    {
+        switch ( in[p] )
+        {
+            case '&' :
+            {
+                out << "&amp;";
+                break;
+            }
+            case '<' :
+            {
+                out << "&lt;";
+                break;
+            }
+            case '>' :
+            {
+                out << "&gt;";
+                break;
+            }
+            default :
+            {
+                out << in[p];
+                break;
+            }
+        }
+        p++;
+    }
+    return out.str();
+}
+
+std::string unescape_html( const std::string& str )
+{
+    std::ostringstream out;
+    size_t len = str.size();
+    for ( size_t i = 0; i < len; i++ )
+    {
+        if ( str[i] == '&' )
+        {
+			if ( str.substr(i,4) == "&lt;" )
+            {
+				out << "<";
+                i+=3;
+            }
+            else
+			if ( str.substr(i,4) == "&gt;" )
+            {
+                out << ">";
+                i+=3;
+            }
+            else
+	        if ( str.substr(i,5) == "&amp;" )
+            {
+                out << "&";
+                i+=4;
+            }
+		}
+        else
+        {
+			out << str[i];
+        }
+    }
+    return out.str();
+}
 
 
 std::vector<std::string> split(const std::string &s, char delim, std::vector<std::string> &elems) 
