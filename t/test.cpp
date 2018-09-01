@@ -15,6 +15,7 @@
 #include "priocpp/connection.h"
 #include <event2/thread.h>
 #include <event2/event.h>
+#include <priohttp/common.h>
 #include <priohttp/multipart.h>
 #include <priohttp/client.h>
 #include <priohttp/http_server.h>
@@ -997,6 +998,20 @@ TEST_F(BasicTest, SimpleHttp2SSLRequest)
 	EXPECT_EQ(200,result);
 }
 
+
+
+TEST_F(BasicTest, PathTest1)
+{
+	std::string self = prio::get_current_work_dir();
+
+	std::string test = prio::real_path(".");
+
+	EXPECT_EQ(self,test);
+
+	std::string test2 = prio::real_path("/.");
+
+	EXPECT_EQ("/",test2);
+}
 
 int main(int argc, char **argv) 
 {
