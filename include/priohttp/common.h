@@ -16,6 +16,7 @@ std::string escape_html(const std::string& in );
 
 std::string get_executable_dir();
 void set_current_work_dir(const std::string& path);
+std::string get_current_work_dir();
 
 std::vector<std::string> split(const std::string &s, char delim, std::vector<std::string> &elems);
 std::vector<std::string> split(const std::string &s, char delim);

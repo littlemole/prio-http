@@ -89,6 +89,24 @@ void set_current_work_dir(const std::string& path)
 #endif    
 }
 
+
+std::string get_current_work_dir()
+{
+#ifdef _WIN32
+    char buf[MAX_PATH];
+    _getcwd(buf,MAX_PATH);
+
+    std::string result(buf);
+    return result;
+#else
+    char buf[PATH_MAX];
+    getcwd(buf,PATH_MAX);
+
+    std::string result(buf);
+    return result;    
+#endif    
+}
+
 std::string escape_html(const std::string& in )
 {
     std::ostringstream out;
