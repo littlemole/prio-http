@@ -56,7 +56,8 @@ int http2_client_stream::on_header_callback(
 
     // plain old header
     response.header((char*)name,(char*)value);
-    std::cout << (char*)name << " " << (char*)value << std::endl;
+
+    //std::cout << (char*)name << " " << (char*)value << std::endl;
     
     return 0;
 }
