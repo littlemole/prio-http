@@ -33,6 +33,7 @@ typedef int ssize_t;
 #ifdef _WIN32
 #include <direct.h>
 #include <pathcch.h>
+#include <shlwapi.h>
 #else
 #include <unistd.h>
 #endif    
