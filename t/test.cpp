@@ -1010,7 +1010,11 @@ TEST_F(BasicTest, PathTest1)
 
 	std::string test2 = prio::real_path("/.");
 
+#ifdef _WIN32
+	EXPECT_EQ("c:\\",test2);
+#else
 	EXPECT_EQ("/",test2);
+#endif
 }
 
 int main(int argc, char **argv) 
