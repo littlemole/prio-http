@@ -44,7 +44,7 @@ std::string real_path( const std::string& path )
 {
 #ifdef _WIN32
     char buf[MAX_PATH];
-    GetFullPathNameA(_path.c_str(), MAX_PATH, buf, NULL);
+    GetFullPathNameA(path.c_str(), MAX_PATH, buf, NULL);
 
     char canonical[MAX_PATH];
     PathCanonicalizeA(canonical,buf);
