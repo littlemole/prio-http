@@ -32,15 +32,17 @@ Future<Response&> HttpClient::GET()
 }
 
 
-Future<Response&> HttpClient::POST(const std::string& body)
+Future<Response&> HttpClient::POST(const std::string& b)
 {
 	method_ = "POST";
+	body(b);
 	return fetch();
 }
 
 
-Future<Response&> HttpClient::PUT( const std::string& body)
+Future<Response&> HttpClient::PUT( const std::string& b)
 {
+	body(b);
 	method_ = "PUT";
 	return fetch();
 }
