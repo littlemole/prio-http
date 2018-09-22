@@ -117,7 +117,7 @@ public:
 	FutureType on(const Request& request, const std::string& path);
 
 	SubRequest();
-    ~SubRequest() noexcept;
+    ~SubRequest();
 
 	virtual void flush(Response& res);
     virtual void onFlush(std::function<void(Request& req, Response& res)> f);
