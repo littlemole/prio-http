@@ -41,6 +41,8 @@ public:
     size_t size() const noexcept;
     std::string toString();
 
+    std::string operator[](const std::string& s);
+    
 protected:
 
     Conversation* con_;

@@ -155,6 +155,18 @@ std::string Headers::get(const std::string& key) const noexcept
     return "";
 }
 
+bool Headers::exists(const std::string& key) const noexcept
+{
+    for ( const std::pair<std::string,std::string>& header : headers_ )
+    {
+        if ( strcasecmp(header.first.c_str(), key.c_str()) == 0 )
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 Headers& Headers::set(const std::string& key, const std::string& val)
 {
     headers_.push_back( header_t(key,val) );

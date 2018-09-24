@@ -8,6 +8,20 @@ Args::Args( const patharguments_t& args)
 {
 }
 
+
+bool Args::exists(const std::string& key)
+{
+    std::vector<std::string> entries = keys();
+    for ( size_t i = 0; i < entries.size(); i++ ) 
+    {
+        if ( entries[i] == key )
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 std::string Args::get(const std::string& key)
 {
     std::vector<std::string> entries = keys();

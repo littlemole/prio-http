@@ -16,6 +16,7 @@ public:
 
     Args( const patharguments_t& args);
 
+    bool exists(const std::string& key);
     std::string get(const std::string& key);
     std::vector<std::string> keys();
     

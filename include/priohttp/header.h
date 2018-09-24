@@ -45,6 +45,7 @@ class Headers
 public:
 
     std::string toString() const;
+    bool exists(const std::string& key) const noexcept;
     std::string get(const std::string& key) const noexcept;
     std::string accept() const noexcept;
     std::string content_type() const noexcept;

@@ -21,6 +21,44 @@ Request::Request( Conversation* c)
 {}
 
 
+std::string Request::operator[](const std::string& s)
+{
+	// path param
+
+	Args args = path.args();
+	if ( args.exists(s) )
+	{
+		return args.get(s);
+	}
+
+	// query param
+	QueryParams qp(path.queryParams());
+	if (qp.exists(s))
+	{
+		return qp.get(s);
+	}
+
+	// cookie value
+
+	const Cookies& c = headers.cookies();
+
+	if(c.exists(s))
+	{
+		return c.get(s).value();
+	}
+
+	// header
+
+	if(headers.exists(s))
+	{
+		return headers.values(s).value().main();
+	}
+
+	return "";
+}
+
+
+
 bool Request::keep_alive() const noexcept
 {
 	return headers.keep_alive(path.protocol());

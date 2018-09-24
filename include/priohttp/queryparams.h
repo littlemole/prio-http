@@ -12,6 +12,7 @@ public:
     QueryParams();
     QueryParams(const std::string& s);
 
+    bool exists(const std::string& key);
     std::string get(const std::string& key);
     std::vector<std::string> keys();
         

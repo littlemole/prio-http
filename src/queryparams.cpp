@@ -24,6 +24,18 @@ QueryParams::QueryParams(const std::string& s)
     }
 }
 
+
+bool QueryParams::exists(const std::string& key)
+{
+    if ( params_.count(key) == 0 )
+    {
+        return false;
+    }
+    
+    return true;
+}
+
+
 std::string QueryParams::get(const std::string& key)
 {
     if ( params_.count(key) == 0 )
