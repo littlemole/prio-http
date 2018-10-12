@@ -20,7 +20,7 @@ public:
     std::string& operator[] (const std::string& key);
     std::string toString();
 
-private:
+protected:
     std::map<std::string,std::string> params_;
 };
 
