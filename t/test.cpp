@@ -802,11 +802,11 @@ TEST_F(BasicTest, HeaderTest1)
 
 	auto p1 = h.value().params()["name"];
 
-	EXPECT_EQ("\"fieldName\"",p1);
+	EXPECT_EQ("fieldName",p1);
 
 	auto p2 = h.value().params()["filename"];
 
-	EXPECT_EQ("\"filename.jpg\"",p2);
+	EXPECT_EQ("filename.jpg",p2);
 }
 
 

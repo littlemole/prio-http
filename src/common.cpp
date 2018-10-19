@@ -41,6 +41,13 @@ typedef int ssize_t;
 
 namespace prio  {
 
+std::string unquote(const std::string& str )
+{
+	if(str.size() > 1 && str[0] == '"'  && str[str.size()-1] == '"' ) return str.substr(1,str.size()-2);
+	if(str.size() > 1 && str[0] == '\'' && str[str.size()-1] == '\'') return str.substr(1,str.size()-2);
+    return str;
+}    
+
 std::string real_path( const std::string& path )
 {
 #ifdef _WIN32

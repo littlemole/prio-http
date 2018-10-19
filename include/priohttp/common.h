@@ -11,6 +11,7 @@
 
 namespace prio  {
 
+std::string unquote(const std::string& str );
 std::string unescape_html( const std::string& str );
 std::string escape_html(const std::string& in );
 

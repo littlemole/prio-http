@@ -34,7 +34,7 @@ std::map<std::string,std::string> HeaderValue::params() const
 		std::vector<std::string> pieces = split(trim(items[i]),'=');
 		if ( pieces.size() > 1)
 		{
-			result[trim(pieces[0])] = trim(pieces[1]);
+			result[trim(pieces[0])] = unquote(trim(pieces[1]));
 		}
 	}
 	return result;;

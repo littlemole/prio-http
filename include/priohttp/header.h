@@ -13,6 +13,7 @@ class HeaderValue
 {
 public:
 
+    HeaderValue() {}
 	HeaderValue(const std::string& s);
 
 	std::string main() const;
@@ -27,6 +28,7 @@ class HeaderValues
 {
 public:
 
+    HeaderValues() {}
 	HeaderValues(const std::string& val);
 
 	size_t size() const;
@@ -43,6 +45,9 @@ typedef std::vector<header_t> headers_t;
 class Headers
 {
 public:
+
+    Headers()
+    {}
 
     std::string toString() const;
     bool exists(const std::string& key) const noexcept;
@@ -71,9 +76,6 @@ public:
     {
         return headers_;
     }
-
-    Headers()
-    {}
 
     Headers(const std::vector<std::pair<std::string,std::string>>& h)
     {
