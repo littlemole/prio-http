@@ -176,6 +176,7 @@ void ClientHttpHeaderReader::consume(const std::string& s)
 		headers_stream_.erase( pos );
 
 		parseHeaders();
+
 		return;
     }
 
@@ -193,7 +194,15 @@ void ClientHttpHeaderReader::parseHeaders()
 	try
 	{
 		parse_headers();
-
+		if (this->con_->response().status().substr(0, 3) == "100")
+		{
+			
+			headers_stream_ = "";
+			std::string tmp = body_stream_;
+			body_stream_ = "";
+			this->consume(tmp);
+			return;
+		}
 		con_->onHeadersComplete(body_stream_);
 	}
 	catch(const std::exception& ex)

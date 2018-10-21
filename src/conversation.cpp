@@ -6,6 +6,12 @@
 
 using namespace repro;
 
+#ifdef _WIN32
+#define strcasecmp _stricmp
+#endif
+
+
+
 namespace prio  {
 
 LITTLE_MOLE_DECLARE_DEBUG_REF_CNT(server_connections);
@@ -126,6 +132,20 @@ void HttpConversation::onHeadersComplete(const std::string& b)
 
 		std::string s = b;
 		reader_.reset(new HttpContentLengthBodyReader(this));
+
+		if (s.empty())
+		{
+			std::string expect = req.headers.get("Expect");
+			if (strcasecmp(expect.c_str(), "100-continue") == 0)
+			{
+				write("HTTP/1.1 100 Continue\r\n\r\n")
+				.then([this]()
+				{
+					reader_->consume("");
+				});
+				return;
+			}
+		}
 		reader_->consume(s);
 	}
 	else

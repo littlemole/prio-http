@@ -347,6 +347,69 @@ TEST_F(BasicTest, SimpleHttp) {
     MOL_TEST_ASSERT_CNTS(0,0);
 }
 
+TEST_F(BasicTest, SimpleHttpPost100) {
+
+	std::string result;
+
+	{
+#ifndef _WIN32
+		signal(SIGPIPE).then([](int s) {});
+#endif
+		http_server httpserver;
+		httpserver.bind(8765)//.listen(10)
+		.then([](Request& req, Response& res) {
+			std::cout << "server start" << std::endl;
+			res.ok().flush();
+		})
+		.otherwise([&httpserver](const std::exception& ex) {
+			std::cerr << "server ex: " << ex.what() << std::endl;
+			httpserver.shutdown();
+			theLoop().exit();
+		});
+
+		TcpConnection::Ptr c;
+
+		TcpConnection::connect("Localhost", 8765)
+			.then([&c](Connection::Ptr client)
+		{
+			c = client;
+			return client->write("POST /test HTTP/1.1\r\nContent-length:10\r\nExpect:100-continue\r\n\r\n");
+		})
+		.then([](Connection::Ptr client)
+		{
+			return client->read();
+		})
+		.then([&result, &httpserver](Connection::Ptr client, std::string data)
+		{
+			std::cout << "client result: " << data << std::endl;
+			return client->write("0123456789");
+		})
+		.then([](Connection::Ptr client)
+		{
+			return client->read();
+		})
+		.then([&result, &httpserver](Connection::Ptr client, std::string data)
+		{
+			std::cout << "client result: " << data << std::endl;
+			result = data;
+
+			client->close();
+			std::cout << "client closed" << std::endl;
+			timeout([&httpserver]()
+			{
+				std::cout << "timeout" << std::endl;
+				httpserver.shutdown();
+				theLoop().exit();
+			}, 1, 1);
+		});
+
+		theLoop().run();
+	}
+	EXPECT_EQ("HTTP/1.1 200 OK\r\nContent-Length:0\r\n\r\n", result);
+	MOL_TEST_ASSERT_CNTS(0, 0);
+}
+
+
 /* todo fix after
 TEST_F(BasicTest, Simple2Http) {
 
@@ -1011,7 +1074,7 @@ TEST_F(BasicTest, PathTest1)
 	std::string test2 = prio::real_path("/.");
 
 #ifdef _WIN32
-	EXPECT_EQ("C:\\",test2);
+	EXPECT_STRCASEEQ("C:\\",test2.c_str());
 #else
 	EXPECT_EQ("/",test2);
 #endif
