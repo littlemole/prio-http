@@ -1082,8 +1082,7 @@ TEST_F(BasicTest, PathTest1)
 
 int main(int argc, char **argv) 
 {
-	prio::init();
-	cryptoneat::SSLUser useSSL;
+	prio::Libraries<prio::EventLoop,cryptoneat::SSLUser> init;
 
 	::testing::InitGoogleTest(&argc, argv);
     int r = RUN_ALL_TESTS();
