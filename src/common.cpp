@@ -497,8 +497,9 @@ Http2SslCtx::~Http2SslCtx()
 
 void Http2SslCtx::load_cert_pem(const std::string& file)
 {
-    ctx->ssl.use_certificate_chain_file(file);
-    ctx->ssl.use_private_key_file(file, boost::asio::ssl::context::pem);
+	SslCtx::load_cert_pem(file);
+   // ctx->ssl.use_certificate_chain_file(file);
+   // ctx->ssl.use_private_key_file(file, boost::asio::ssl::context::pem);
 }
 
 
