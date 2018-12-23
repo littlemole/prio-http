@@ -86,6 +86,7 @@ protected:
     bool headersSent_;
     bool isChunked_;
     bool isGzipped_;
+
 };
 
 

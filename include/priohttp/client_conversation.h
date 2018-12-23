@@ -42,7 +42,8 @@ public:
 	virtual repro::Future<> write(const std::string& s);
 
 	virtual void flush(Response& res) {}
-	virtual void onFlush(std::function<void(Request& req, Response& res)> f) {};
+	virtual void onCompletion(std::function<void(Request& req, Response& res)> f) {};
+	virtual void onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f) {};
 	virtual void chunk(const std::string& ch) {};
 	
 	virtual bool keepAlive()
@@ -90,7 +91,9 @@ public:
 
 	virtual void onRequestError(const std::exception& s);
 	virtual void flush(Response& res) {}
-	virtual void onFlush(std::function<void(Request& req, Response& res)> f) {};
+	virtual void onCompletion(std::function<void(Request& req, Response& res)> f) {};
+	virtual void onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f) {};
+
 	virtual void chunk(const std::string& ch) {};
 	
 	virtual bool keepAlive()

@@ -21,7 +21,8 @@ public:
     ~Http2Conversation();
 
 	virtual void flush(Response& res);
-    virtual void onFlush(std::function<void(Request& req, Response& res)> f);
+    virtual void onCompletion(std::function<void(Request& req, Response& res)> f);
+	virtual void onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f);
 	virtual void chunk(const std::string& ch);
 	virtual void onRequestError(const std::exception& s);	
 	virtual bool keepAlive();
@@ -42,6 +43,7 @@ private:
 	Connection::Ptr con_;
 	PromiseType promise_;
 
+	std::function<repro::Future<>(Request& req, Response& res)> flusheaders_func_;
 	std::function<void(Request& req, Response& res)> completion_func_;
 
     Ptr self_;

@@ -19,7 +19,16 @@ Http2Conversation::Http2Conversation(Connection::Ptr f)
 	  con_(f),
 	  promise_(repro::promise<Request&,Response&>()),
       completion_func_( [](Request&,Response&){}),
-      http2_(std::make_unique<http2_server_session>(this))
+      http2_(std::make_unique<http2_server_session>(this)),
+	  flusheaders_func_( [](Request&,Response&)
+	  {
+		  auto p = repro::promise<>();
+		  nextTick([p]()
+		  {
+			  p.resolve();
+		  });
+		  return p.future();
+	  })      
 {
 	LITTLE_MOLE_ADDREF_DEBUG_REF_CNT(server_connections);
 }
@@ -75,31 +84,40 @@ void Http2Conversation::resolve(Request& req, Response& res)
 
 void Http2Conversation::flush(Response& res)
 {        
-    http2_stream* stream = http2_->flush(res);
+    int stream_id = res.attributes.attr<int>(":http2:stream:id");    
+ 
+    http2_server_stream* stream = http2_->get_stream_by_id(stream_id);
 
-    auto ptr = shared_from_this();
-    auto ptr_stream = stream->shared_from_this();
+	flusheaders_func_(stream->req,res)
+	.then( [this,&res]()
+	{
+        http2_stream* stream = http2_->flush(res);
 
-    http2_->send()
-    .then([ptr,ptr_stream]()
-    {
-        if(ptr->completion_func_)
+        auto ptr = shared_from_this();
+        auto ptr_stream = stream->shared_from_this();
+
+        http2_->send()
+        .then([ptr,ptr_stream]()
         {
-            ptr->completion_func_(ptr_stream->req,ptr_stream->res);
-        }
-    
-        if(ptr_stream->req.detached())
+            if(ptr->completion_func_)
+            {
+                ptr->completion_func_(ptr_stream->req,ptr_stream->res);
+            }
+        
+            if(ptr_stream->req.detached())
+            {
+                ptr->self_.reset();
+                return;
+            }
+        
+            ptr_stream->reset();        
+        })
+        .otherwise([ptr](const std::exception& ex)
         {
-            ptr->self_.reset();
-            return;
-        }
-    
-        ptr_stream->reset();        
-    })
-    .otherwise([ptr](const std::exception& ex)
-    {
-        ptr->onRequestError(ex);
-    });    
+            ptr->onRequestError(ex);
+        });    
+
+    });
 }
 
 void Http2Conversation::chunk(const std::string& ch)
@@ -124,9 +142,14 @@ bool Http2Conversation::keepAlive()
 	return false;
 }
 
-void Http2Conversation::onFlush(std::function<void(Request& req, Response& res)> f)
+void Http2Conversation::onCompletion(std::function<void(Request& req, Response& res)> f)
 {
     completion_func_ = f;
+}
+
+void Http2Conversation::onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f)
+{
+	flusheaders_func_ = f;
 }
 
 

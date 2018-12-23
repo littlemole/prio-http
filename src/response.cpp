@@ -240,6 +240,7 @@ void HttpResponse::flushHeaders()
     }
 
     headersSent_ = true;
+ //   onFlushHeaders_();
 }
 
 HttpResponse& HttpResponse::reset()
@@ -256,7 +257,7 @@ HttpResponse& HttpResponse::reset()
 
 void HttpResponse::onFlush(std::function<void(Request& req, Response& res)> f)
 {
-	http_->onFlush(f);
+	http_->onCompletion(f);
 }
 
 

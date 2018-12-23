@@ -11,6 +11,7 @@ void HttpPlainBodyWriter::flush()
 	HttpResponse& response = (HttpResponse&)(con_->response());
 
 	response.flushHeaders();
+
 	std::string payload = con_->response().toString();
 
 	nextTick()

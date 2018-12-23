@@ -23,7 +23,16 @@ HttpConversation::HttpConversation(Connection::Ptr f)
 	  con_(f),
 	  promise_(repro::promise<Request&,Response&>()),
 	  keep_alive_(false),
-	  completion_func_( [](Request&,Response&){})
+	  completion_func_( [](Request&,Response&){}),
+	  flusheaders_func_( [](Request&,Response&)
+	  {
+		  auto p = promise<>();
+		  nextTick([p]()
+		  {
+			  p.resolve();
+		  });
+		  return p.future();
+	  })
 {
 
 	reader_.reset(new HttpHeaderReader(this));
@@ -90,11 +99,15 @@ void HttpConversation::resolve(Request& req, Response& res)
 
 void HttpConversation::flush(Response& res)
 {
-	if(res.isGzipped() && !res.isChunked())
+	flusheaders_func_(req,res)
+	.then( [this,&res]()
 	{
-		writer_.reset( new HttpGzippedBodyWriter(new HttpPlainBodyWriter(this)));
-	}
-	writer_->flush();
+		if(res.isGzipped() && !res.isChunked())
+		{
+			writer_.reset( new HttpGzippedBodyWriter(new HttpPlainBodyWriter(this)));
+		}
+		writer_->flush();
+	});
 }
 
 void HttpConversation::chunk(const std::string& ch)
@@ -210,9 +223,14 @@ Connection::Ptr HttpConversation::con()
 	return con_;
 }
 
-void HttpConversation::onFlush(std::function<void(Request& req, Response& res)> f)
+void HttpConversation::onCompletion(std::function<void(Request& req, Response& res)> f)
 {
 	completion_func_ = f;
+}
+
+void HttpConversation::onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f)
+{
+	flusheaders_func_ = f;
 }
 
 bool HttpConversation::keepAlive()
@@ -276,9 +294,15 @@ Connection::Ptr SubRequest::con()
 	return empty;
 }
 
-void SubRequest::onFlush(std::function<void(Request& req, Response& res)> f)
+void SubRequest::onCompletion(std::function<void(Request& req, Response& res)> f)
 {
 	completion_func_ = f;
+}
+
+
+void SubRequest::onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f)
+{
+	flusheaders_func_ = f;
 }
 
 bool SubRequest::keepAlive()
