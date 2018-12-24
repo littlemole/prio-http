@@ -52,11 +52,13 @@ public:
     
     const std::vector<Cookie>& all() const;
 
-    Cookies& add(const Cookie& c) { cookies_.push_back(c); return *this; }
+    Cookies& add(const Cookie& c);
 
     bool empty() const { return cookies_.empty(); }
 
     void clear();
+
+    void remove(const std::string& name);
 
 private:
     std::vector<Cookie> cookies_;

@@ -207,6 +207,13 @@ std::vector<Cookie>& Cookies::parse(const std::string& txt)
 	return cookies_;
 }
 
+Cookies& Cookies::add(const Cookie& c) 
+{ 
+    remove(c.name());
+    cookies_.push_back(c); 
+    return *this; 
+}
+
 
 bool Cookies::exists(const std::string& name) const
 {
@@ -230,6 +237,18 @@ const Cookie& Cookies::get(const std::string& name) const
     return empty;
 }
 
+
+void Cookies::remove(const std::string& name)
+{
+    for( auto it = cookies_.begin(); it != cookies_.end(); it++ ) 
+    {
+        if( (*it).name() == name ) 
+        {
+            cookies_.erase(it);
+            return;
+        }
+    }  
+}
 
 const std::vector<Cookie>& Cookies::all() const
 {

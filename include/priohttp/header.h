@@ -49,6 +49,14 @@ public:
     Headers()
     {}
 
+    Headers(const std::vector<std::pair<std::string,std::string>>& h)
+    {
+        for ( auto& it : h)
+        {
+            set(it.first,it.second);
+        }
+    }    
+
     std::string toString() const;
     bool exists(const std::string& key) const noexcept;
     std::string get(const std::string& key) const noexcept;
@@ -75,14 +83,6 @@ public:
     std::vector<std::pair<std::string,std::string>>& raw()
     {
         return headers_;
-    }
-
-    Headers(const std::vector<std::pair<std::string,std::string>>& h)
-    {
-        for ( auto& it : h)
-        {
-            set(it.first,it.second);
-        }
     }
 
 private:
