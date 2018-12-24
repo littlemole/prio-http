@@ -103,7 +103,8 @@ public:
 
     void size(size_t);
 
-    void onFlush(std::function<void(Request& req, Response& res)> f);
+    void onCompletion(std::function<void(Request& req, Response& res)> f);
+    void onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f);
 
     bool headersSent() { return headersSent_; }
 

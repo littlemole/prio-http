@@ -255,11 +255,16 @@ HttpResponse& HttpResponse::reset()
 }
 
 
-void HttpResponse::onFlush(std::function<void(Request& req, Response& res)> f)
+void HttpResponse::onCompletion(std::function<void(Request& req, Response& res)> f)
 {
 	http_->onCompletion(f);
 }
 
+
+void HttpResponse::onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f)
+{
+	http_->onFlushHeaders(f);
+}
 
 } // close namespaces
 
