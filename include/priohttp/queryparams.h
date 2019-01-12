@@ -2,6 +2,7 @@
 #define _MOL_DEF_GUARD_DEFINE_MOD_HTTP_REQUEST_PARAMS_DEF_GUARD_
 
 #include "priohttp/common.h"
+#include <set>
 
 namespace prio  {
 
@@ -14,14 +15,18 @@ public:
 
     bool exists(const std::string& key);
     std::string get(const std::string& key);
-    std::vector<std::string> keys();
-        
+    std::set<std::string> keys();
+    std::vector<std::string> array(const std::string& key);
+
+    void remove(const std::string& key);
+
     void set(const std::string& key, const std::string& value);
+    void add(const std::string& key, const std::string& value);
     std::string& operator[] (const std::string& key);
     std::string toString();
 
 protected:
-    std::map<std::string,std::string> params_;
+    std::vector<std::pair<std::string,std::string>> params_;
 };
 
 } // close namespaces

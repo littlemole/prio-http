@@ -1,6 +1,12 @@
 #include "priohttp/queryparams.h"
 #include "priohttp/urlencode.h"
 
+#include <cstring>
+
+#ifdef _WIN32
+#define strcasecmp _stricmp
+#endif
+
 namespace prio  {
 
 QueryParams::QueryParams()
@@ -18,7 +24,13 @@ QueryParams::QueryParams(const std::string& s)
             std::vector<std::string> p = split(v[i],'=');
             if ( p.size() > 1 )
             {
-                params_[Urlencode::decode(p[0])] = Urlencode::decode(p[1]);
+                //params_[Urlencode::decode(p[0])] = Urlencode::decode(p[1]);
+                params_.push_back(
+                    std::make_pair(
+                        Urlencode::decode(p[0]),
+                        Urlencode::decode(p[1])
+                    )
+                );
             }
         }
     }
@@ -27,43 +39,89 @@ QueryParams::QueryParams(const std::string& s)
 
 bool QueryParams::exists(const std::string& key)
 {
-    if ( params_.count(key) == 0 )
+    for( std::size_t i = 0; i < params_.size(); i++)
     {
-        return false;
+        if ( strcasecmp(params_[i].first.c_str(),key.c_str()) == 0 )
+        {
+            return true;
+        }
     }
     
-    return true;
+    return false;
 }
 
 
 std::string QueryParams::get(const std::string& key)
 {
-    if ( params_.count(key) == 0 )
+    for( std::size_t i = 0; i < params_.size(); i++)
     {
-        return "";
+        if ( strcasecmp(params_[i].first.c_str(),key.c_str()) == 0 )
+        {
+            return params_[i].second;
+        }
     }
-    
-    return params_[key];
-}
+    return "";
+} 
 
-std::vector<std::string> QueryParams::keys()
+
+std::vector<std::string> QueryParams::array(const std::string& key)
 {
-	std::vector<std::string> v;
+    std::vector<std::string> v;
+    for( std::size_t i = 0; i < params_.size(); i++)
+    {
+        if ( strcasecmp(params_[i].first.c_str(),key.c_str()) == 0 )
+        {
+            v.push_back( params_[i].second);
+        }
+    }
+    return v;
+} 
+
+void QueryParams::remove(const std::string& key)
+{
+    std::vector<std::pair<std::string,std::string>> tmp;
+    for( std::size_t i = 0; i < params_.size(); i++)
+    {
+        if ( strcasecmp(params_[i].first.c_str(),key.c_str()) != 0 )
+        {
+            tmp.push_back(params_[i]);
+        }
+    }
+    params_ = tmp;
+} 
+
+std::set<std::string> QueryParams::keys()
+{
+	std::set<std::string> v;
 	for ( auto it = params_.begin(); it != params_.end(); it++)
 	{
-		v.push_back(it->first);
+		v.insert(it->first);
 	}
 	return v;
 }
 
 void QueryParams::set(const std::string& key, const std::string& value)
 {
-	params_[key] = value;
+    remove(key);
+    add(key,value);
+}
+
+void QueryParams::add(const std::string& key, const std::string& value)
+{
+    params_.push_back( std::make_pair( key, value ) );
 }
 
 std::string& QueryParams::operator[] (const std::string& key)
 {
-	return params_[key];
+    for( std::size_t i = 0; i < params_.size(); i++)
+    {
+        if ( strcasecmp(params_[i].first.c_str(),key.c_str()) == 0 )
+        {
+            return params_[i].second;
+        }
+    }
+    add(key,"");
+    return params_.back().second;
 }
 
 std::string QueryParams::toString()
