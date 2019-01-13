@@ -140,6 +140,7 @@ void HttpRequest::reset() noexcept
 	headers.reset();
 	body_ = "";
 	attributes.reset();
+	path.reset();
 }
 
 
