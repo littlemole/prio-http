@@ -41,7 +41,7 @@ const std::string& PathInfo::url() const noexcept
 std::string PathInfo::path() const noexcept
 {
     size_t pos = path_.find("?");
-    if ( pos == std::string::npos || pos >= path_.size()-1 )
+    if ( pos == std::string::npos )
     {
         return path_;
     }
