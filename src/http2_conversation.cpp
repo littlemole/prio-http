@@ -18,17 +18,17 @@ Http2Conversation::Http2Conversation(Connection::Ptr f)
 	: 
 	  con_(f),
 	  promise_(repro::promise<Request&,Response&>()),
-      completion_func_( [](Request&,Response&){}),
-      http2_(std::make_unique<http2_server_session>(this)),
 	  flusheaders_func_( [](Request&,Response&)
-	  {
-		  auto p = repro::promise<>();
-		  nextTick([p]()
-		  {
-			  p.resolve();
-		  });
-		  return p.future();
-	  })      
+        {
+            auto p = repro::promise<>();
+            nextTick([p]()
+            {
+                p.resolve();
+            });
+            return p.future();
+        }),      
+      completion_func_( [](Request&,Response&){}),
+      http2_(std::make_unique<http2_server_session>(this))
 {
 	LITTLE_MOLE_ADDREF_DEBUG_REF_CNT(server_connections);
 }

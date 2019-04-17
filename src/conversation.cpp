@@ -23,7 +23,6 @@ HttpConversation::HttpConversation(Connection::Ptr f)
 	  con_(f),
 	  promise_(repro::promise<Request&,Response&>()),
 	  keep_alive_(false),
-	  completion_func_( [](Request&,Response&){}),
 	  flusheaders_func_( [](Request&,Response&)
 	  {
 		  auto p = promise<>();
@@ -32,7 +31,8 @@ HttpConversation::HttpConversation(Connection::Ptr f)
 			  p.resolve();
 		  });
 		  return p.future();
-	  })
+	  }),
+	  completion_func_( [](Request&,Response&){})
 {
 
 	reader_.reset(new HttpHeaderReader(this));

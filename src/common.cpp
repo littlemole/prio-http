@@ -61,7 +61,10 @@ std::string real_path( const std::string& path )
     return result;
 #else
     char buf[PATH_MAX];
-    realpath(path.c_str(), buf);
+    if(!realpath(path.c_str(), buf))
+    {
+        throw repro::Ex("real path not avail");
+    }
 
     std::string result(buf);
     return result;
@@ -77,7 +80,10 @@ std::string get_executable_dir()
     return result;
 #else
     char buf[PATH_MAX];
-    readlink("/proc/self/exe", buf, PATH_MAX);
+    if( readlink("/proc/self/exe", buf, PATH_MAX) == -1 )
+    {
+        throw repro::Ex("readlink failed");
+    }
     std::string result(buf);
     size_t pos = result.find_last_of("/");
     if(pos != std::string::npos)
@@ -93,7 +99,10 @@ void set_current_work_dir(const std::string& path)
 #ifdef _WIN32
     _chdir(path.c_str());
 #else
-    chdir(path.c_str());
+    if( chdir(path.c_str()) == -1 )
+    {
+        throw repro::Ex("chdir failed");
+    };
 #endif    
 }
 
@@ -108,7 +117,10 @@ std::string get_current_work_dir()
     return result;
 #else
     char buf[PATH_MAX];
-    getcwd(buf,PATH_MAX);
+    if(getcwd(buf,PATH_MAX) == NULL)
+    {
+        throw repro::Ex("getcwd failed");
+    }
 
     std::string result(buf);
     return result;    
@@ -498,8 +510,6 @@ Http2SslCtx::~Http2SslCtx()
 void Http2SslCtx::load_cert_pem(const std::string& file)
 {
 	SslCtx::load_cert_pem(file);
-   // ctx->ssl.use_certificate_chain_file(file);
-   // ctx->ssl.use_private_key_file(file, boost::asio::ssl::context::pem);
 }
 
 

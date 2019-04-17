@@ -379,7 +379,7 @@ TEST_F(BasicTest, SimpleHttpPost100) {
 		{
 			return client->read();
 		})
-		.then([&result, &httpserver](Connection::Ptr client, std::string data)
+		.then([](Connection::Ptr client, std::string data)
 		{
 			std::cout << "client result: " << data << std::endl;
 			return client->write("0123456789");
@@ -1038,7 +1038,7 @@ TEST_F(BasicTest, SimpleHttp2SSLRequest)
 				request.header("HOST","localhost:8765");
 
 				Http2ClientConversation::on(client,request)
-				.then( [&result,&httpserver,&c](Request& req, Response& res)
+				.then( [&result,&httpserver](Request& req, Response& res)
 				{
 					std::cout << res.status() << std::endl;
 					result = res.statusCode();
