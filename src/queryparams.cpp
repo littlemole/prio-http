@@ -37,7 +37,7 @@ QueryParams::QueryParams(const std::string& s)
 }
 
 
-bool QueryParams::exists(const std::string& key)
+bool QueryParams::exists(const std::string& key) const
 {
     for( std::size_t i = 0; i < params_.size(); i++)
     {
@@ -51,7 +51,7 @@ bool QueryParams::exists(const std::string& key)
 }
 
 
-std::string QueryParams::get(const std::string& key)
+std::string QueryParams::get(const std::string& key) const
 {
     for( std::size_t i = 0; i < params_.size(); i++)
     {
@@ -64,7 +64,7 @@ std::string QueryParams::get(const std::string& key)
 } 
 
 
-std::vector<std::string> QueryParams::array(const std::string& key)
+std::vector<std::string> QueryParams::array(const std::string& key) const
 {
     std::vector<std::string> v;
     for( std::size_t i = 0; i < params_.size(); i++)
@@ -90,7 +90,7 @@ void QueryParams::remove(const std::string& key)
     params_ = tmp;
 } 
 
-std::set<std::string> QueryParams::keys()
+std::set<std::string> QueryParams::keys() const
 {
 	std::set<std::string> v;
 	for ( auto it = params_.begin(); it != params_.end(); it++)
@@ -124,7 +124,7 @@ std::string& QueryParams::operator[] (const std::string& key)
     return params_.back().second;
 }
 
-std::string QueryParams::toString()
+std::string QueryParams::toString() const
 {
 	std::ostringstream oss;
 	for ( auto it = params_.begin(); it != params_.end(); it++)

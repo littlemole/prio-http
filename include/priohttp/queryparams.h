@@ -13,17 +13,17 @@ public:
     QueryParams();
     QueryParams(const std::string& s);
 
-    bool exists(const std::string& key);
-    std::string get(const std::string& key);
-    std::set<std::string> keys();
-    std::vector<std::string> array(const std::string& key);
+    bool exists(const std::string& key) const;
+    std::string get(const std::string& key) const;
+    std::set<std::string> keys() const;
+    std::vector<std::string> array(const std::string& key) const;
 
     void remove(const std::string& key);
 
     void set(const std::string& key, const std::string& value);
     void add(const std::string& key, const std::string& value);
     std::string& operator[] (const std::string& key);
-    std::string toString();
+    std::string toString() const;
 
 protected:
     std::vector<std::pair<std::string,std::string>> params_;

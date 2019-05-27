@@ -46,11 +46,11 @@ public:
 
     // attribute getters
     bool exists( const std::string& key ) const noexcept;
-    any get( const std::string& key ) ;
+    any get( const std::string& key ) const;
 
 
     template<class T>
-    T attr(const std::string& key)
+    T attr(const std::string& key) const
     {
     	try
     	{

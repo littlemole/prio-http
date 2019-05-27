@@ -9,7 +9,7 @@ Args::Args( const patharguments_t& args)
 }
 
 
-bool Args::exists(const std::string& key)
+bool Args::exists(const std::string& key) const
 {
     std::vector<std::string> entries = keys();
     for ( size_t i = 0; i < entries.size(); i++ ) 
@@ -22,7 +22,7 @@ bool Args::exists(const std::string& key)
     return false;
 }
 
-std::string Args::get(const std::string& key)
+std::string Args::get(const std::string& key) const
 {
     std::vector<std::string> entries = keys();
     for ( size_t i = 0; i < entries.size(); i++ ) 
@@ -35,7 +35,7 @@ std::string Args::get(const std::string& key)
     return "";
 }
 
-std::vector<std::string> Args::keys()
+std::vector<std::string> Args::keys() const
 {
     std::vector<std::string> v;
     for ( size_t i = 0; i < args_.size(); i++ ) 
