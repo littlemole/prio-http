@@ -32,7 +32,7 @@ public:
 	virtual void resolve(Request& req, Response& res) = 0;
 };
  
-class ReaderWriterConversation //: public Conversation
+class ReaderWriterConversation 
 {
 public:
 
