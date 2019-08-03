@@ -4,16 +4,16 @@
 namespace prio  {
 
 
-void Attributes::set( const std::string& key,const any& a )
+void Attributes::set( const std::string& key,const std::any& a )
 {
-    attrs_.insert( std::pair<std::string,any>( key, a ) );
+    attrs_.insert( std::pair<std::string,std::any>( key, a ) );
 }
 
-any Attributes::get( const std::string& key ) const
+std::any Attributes::get( const std::string& key ) const
 {
     if ( attrs_.count(key) == 0 )
     {
-        return any(nullptr);
+        return std::any(nullptr);
     }
     return attrs_.at(key);
 }

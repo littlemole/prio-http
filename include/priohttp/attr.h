@@ -4,20 +4,12 @@
 //! \file attr.h
 
 #include "priohttp/common.h"
-#ifndef _WIN32
-#ifdef __clang__
-#include <boost/any.hpp>
-#else
-#include <experimental/any>
-#endif
-#else
-#include <boost/any.hpp>
-//#include <any>
-#endif
+#include <any>
 
 namespace prio  {
 
 
+<<<<<<< HEAD
 #ifndef _WIN32
 #ifdef __clang__
 	typedef boost::any any;
@@ -53,8 +45,7 @@ public:
 
     //! cgeck whether attribute exists
     bool exists( const std::string& key ) const noexcept;
-	//! get specific object as a std::any object
-    any get( const std::string& key ) const;
+    std::any get( const std::string& key ) const;
 
 	//! fetch attribute of type T for the given key
     template<class T>
@@ -62,7 +53,7 @@ public:
     {
     	try
     	{
-            return any_cast<T>(get(key));
+            return std::any_cast<T>(get(key));
     	}
     	catch(...)
     	{
@@ -71,20 +62,20 @@ public:
     }
 
     //! set attribute as std::any object
-    void set( const std::string& key, const any& a );
+    void set( const std::string& key, const std::any& a );
 
 	//! set object a of tyoe T as attribute under given key
     template<class T>
 	void set(const std::string& key, T a )
 	{
-    	set( key, any(a) );
+    	set( key, std::any(a) );
 	}
 
 	//! clear attributes
     void reset();
 
 private:
-    std::map<std::string,any> attrs_;
+    std::map<std::string,std::any> attrs_;
 };
 
 }
