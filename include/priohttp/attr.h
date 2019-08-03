@@ -9,32 +9,6 @@
 namespace prio  {
 
 
-<<<<<<< HEAD
-#ifndef _WIN32
-#ifdef __clang__
-	typedef boost::any any;
-#else
-	typedef std::experimental::any any;
-#endif	
-#else
-	typedef boost::any any;
-#endif
-
-//! any_cast wrapper for various compilers
-template<class T>
-auto any_cast(T&& t)
-{
-#ifndef _WIN32
-#ifdef __clang__
-	return boost::any_cast<T>(std::forward<T>(t));
-#else
-	return std::experimental::any_cast<T>(std::forward<T>(t));
-#endif
-#else
-	return std::any_cast<T>(std::forward<T>(t));
-#endif
-}
-
 //! \brief Generic Attributes 
 //! 
 //! attached to HTTP request/response
