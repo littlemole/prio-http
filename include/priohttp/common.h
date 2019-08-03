@@ -1,6 +1,8 @@
 #ifndef _MOL_DEF_GUARD_DEFINE_MOD_HTTP_COMMON_DEF_GUARD_
 #define _MOL_DEF_GUARD_DEFINE_MOD_HTTP_COMMON_DEF_GUARD_
 
+//! \file common.h
+
 #include "reprocpp/promise.h"
 #include "priocpp/api.h"
 
@@ -40,14 +42,19 @@ std::string slurp( const std::string& fp );
 
 struct Http2SslCtxImpl;
 
+//! Http2 aware SSL context
 class Http2SslCtx : public prio::SslCtx
 {
 public:
 	Http2SslCtx();
 	~Http2SslCtx();
 
+	//! load server TLS certs from file
     void load_cert_pem(const std::string& file);
+	//! enable listening to http2 requests
 	void enableHttp2();
+
+	//! \private
 	void enableHttp2Client();
 };
 

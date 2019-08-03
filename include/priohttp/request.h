@@ -1,6 +1,7 @@
 #ifndef _MOL_DEF_GUARD_DEFINE_MOD_HTTP_REQUEST_DEF_GUARD_
 #define _MOL_DEF_GUARD_DEFINE_MOD_HTTP_REQUEST_DEF_GUARD_
 
+//! \file request.h
 #include "priohttp/common.h"
 #include "priohttp/arg.h"
 #include "priohttp/path.h"
@@ -18,29 +19,40 @@ namespace prio  {
 class HttpRequestParser;
 class Conversation;
 
-
+//! \brief HTTP Request
 class Request
 {
 friend class HttpRequestParser;
 
 public:
 
+    //! HTTP Path information
 	PathInfo path;
+    //! HTTP Header information
 	Headers headers;
+    //! custom attributes 
 	Attributes attributes;
 
+    //! \private
 	Request();
+    //! \private
     Request(Conversation* con);
         
+    //! HTTP body as a std::string
     const std::string& body() const noexcept;
-    
+    //! \private    
     Connection::Ptr con()  const noexcept;
+    //! \private
     bool keep_alive()  const noexcept;
+    //! \private
     bool detached()  const noexcept;
 
+    //! HTTP body size
     size_t size() const noexcept;
+    //! return complete request as valid HTTP represenation
     std::string toString();
 
+    //! get request param by string
     std::string operator[](const std::string& s);
     
 protected:
@@ -51,7 +63,7 @@ protected:
     bool detached_;
 };
 
-
+//! \private
 class HttpRequest : public Request
 {
 friend class HttpRequestParser;
