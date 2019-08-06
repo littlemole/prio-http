@@ -1,0 +1,10 @@
+<map id="include/priohttp/response.h" name="include/priohttp/response.h">
+<area shape="rect" id="node2" href="$client_8h_source.html" title="include/priohttp/client.h" alt="" coords="5,87,161,114"/>
+<area shape="rect" id="node3" href="$conversation_8h_source.html" title="include/priohttp/conversation.h" alt="" coords="185,87,384,114"/>
+<area shape="rect" id="node5" href="$http2__client_8h_source.html" title="include/priohttp/http2\l_client.h" alt="" coords="380,169,523,211"/>
+<area shape="rect" id="node7" href="$http2_8h_source.html" title="include/priohttp/http2.h" alt="" coords="458,87,613,114"/>
+<area shape="rect" id="node8" href="$reader_8h_source.html" title="include/priohttp/server\l/reader.h" alt="" coords="637,80,788,121"/>
+<area shape="rect" id="node9" href="$writer_8h_source.html" title="include/priohttp/server\l/writer.h" alt="" coords="812,80,963,121"/>
+<area shape="rect" id="node4" href="$client__conversation_8h_source.html" title="include/priohttp/client\l_conversation.h" alt="" coords="44,169,189,211"/>
+<area shape="rect" id="node6" href="$http2__conversation_8h_source.html" title="include/priohttp/http2\l_conversation.h" alt="" coords="213,169,356,211"/>
+</map>
