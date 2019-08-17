@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include "priohttp/compress.h"
+#include <reprocpp/ex.h>
 
 /* CHUNK is the size of the memory chunk used by the zlib routines. */
 
