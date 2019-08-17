@@ -13,7 +13,7 @@
 
 /* The following macro calls a zlib routine and checks the return
    value. If the return value ("status") is not OK, it prints an error
-   message and exits the program. Zlib's error statuses are all less
+   message. Zlib's error statuses are all less
    than zero. */
 
 #define CALL_ZLIB(x) {                                                  \
@@ -23,7 +23,7 @@
             fprintf (stdout,                                            \
                      "%s:%d: %s returned a bad status of %d.\n",        \
                      __FILE__, __LINE__, #x, status);                   \
-            exit (EXIT_FAILURE);                                        \
+            throw repro::Ex("gzip error");                              \
         }                                                               \
     }
 
