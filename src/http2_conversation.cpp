@@ -86,9 +86,14 @@ void Http2Conversation::flush(Response& res)
 {        
     int stream_id = res.attributes.attr<int>(":http2:stream:id");    
  
-    //http2_server_stream* stream = http2_->get_stream_by_id(stream_id);
+    http2_server_stream* s = http2_->get_stream_by_id(stream_id);
+    if(!s)
+    {
+        onRequestError(repro::Ex("stream is gone"));
+        return;
+    }
 
-    auto stream = http2_->get_stream_by_id(stream_id)->shared_from_this();
+    auto stream = s->shared_from_this();
     auto ptr = shared_from_this();
 
 	flusheaders_func_(stream->req,res)
