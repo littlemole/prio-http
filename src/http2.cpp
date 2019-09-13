@@ -454,11 +454,14 @@ http2_server_stream* http2_server_session::flush(Response& res)
         );    
     }
     
-    send_response(
+    if(send_response(
         stream_id, 
         &hdrs[0], 
         hdrs.size()
-    );    
+    ) == -1)
+    {
+        return 0;
+    }  
 
     return stream;
 }

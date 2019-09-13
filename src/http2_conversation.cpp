@@ -93,6 +93,10 @@ void Http2Conversation::flush(Response& res)
 	{
         http2_stream* stream = http2_->flush(res);
 
+        if(!stream)
+        {
+            return;
+        }
         auto ptr = shared_from_this();
         auto ptr_stream = stream->shared_from_this();
 
