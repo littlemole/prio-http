@@ -86,35 +86,33 @@ void Http2Conversation::flush(Response& res)
 {        
     int stream_id = res.attributes.attr<int>(":http2:stream:id");    
  
-    http2_server_stream* stream = http2_->get_stream_by_id(stream_id);
+    //http2_server_stream* stream = http2_->get_stream_by_id(stream_id);
+
+    auto stream = http2_->get_stream_by_id(stream_id)->shared_from_this();
+    auto ptr = shared_from_this();
 
 	flusheaders_func_(stream->req,res)
-	.then( [this,&res]()
+	.then( [ptr,stream,&res]()
 	{
-        http2_stream* stream = http2_->flush(res);
+        ptr->http2_->flush(res);
 
-        if(!stream)
-        {
-            return;
-        }
-        auto ptr = shared_from_this();
-        auto ptr_stream = stream->shared_from_this();
+        //auto ptr_stream = stream->shared_from_this();
 
-        http2_->send()
-        .then([ptr,ptr_stream]()
+        ptr->http2_->send()
+        .then([ptr,stream]()
         {
             if(ptr->completion_func_)
             {
-                ptr->completion_func_(ptr_stream->req,ptr_stream->res);
+                ptr->completion_func_(stream->req,stream->res);
             }
         
-            if(ptr_stream->req.detached())
+            if(stream->req.detached())
             {
                 ptr->self_.reset();
                 return;
             }
         
-            ptr_stream->reset();        
+            stream->reset();        
         })
         .otherwise([ptr](const std::exception& ex)
         {
