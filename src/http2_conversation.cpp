@@ -99,7 +99,12 @@ void Http2Conversation::flush(Response& res)
 	flusheaders_func_(stream->req,res)
 	.then( [ptr,stream,&res]()
 	{
-        ptr->http2_->flush(res);
+        auto s = ptr->http2_->flush(res);
+        if(!s)
+        {
+            ptr->onRequestError(repro::Ex("stream went away"));
+            return;
+        }
 
         //auto ptr_stream = stream->shared_from_this();
 
