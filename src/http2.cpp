@@ -306,7 +306,8 @@ int http2_server_session::send_response(int32_t stream_id,nghttp2_nv *nva, size_
     int rv = nghttp2_submit_response(session_, stream_id, nva, nvlen, &data_prd);
     if (rv != 0) 
     {
-        con_->onRequestError(repro::Ex("http2_server_session::send_response"));
+        //con_->onRequestError(repro::Ex("http2_server_session::send_response"));
+        std::cout << "http2_server_session::send_response failed " << rv << std::endl;
         return -1;
     }
     return 0;

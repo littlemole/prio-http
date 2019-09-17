@@ -91,7 +91,8 @@ void Http2Conversation::flush(Response& res)
     http2_server_stream* s = http2_->get_stream_by_id(stream_id);
     if(!s)
     {
-        onRequestError(repro::Ex("stream is gone"));
+        //onRequestError(repro::Ex("stream is gone"));
+        std::cout << "stream id is gone " << stream_id << std::endl;
         return;
     }
 
@@ -104,7 +105,8 @@ void Http2Conversation::flush(Response& res)
         auto s = ptr->http2_->flush(res);
         if(!s)
         {
-            ptr->onRequestError(repro::Ex("stream went away"));
+            //ptr->onRequestError(repro::Ex("stream went away"));
+            std::cout << "stream id went away " << stream_id << std::endl;
             return;
         }
 
