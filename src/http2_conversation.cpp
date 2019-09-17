@@ -85,6 +85,8 @@ void Http2Conversation::resolve(Request& req, Response& res)
 void Http2Conversation::flush(Response& res)
 {        
     int stream_id = res.attributes.attr<int>(":http2:stream:id");    
+
+    std::cout << "Http2Conversation::flush stream id: " << stream_id << std::endl;
  
     http2_server_stream* s = http2_->get_stream_by_id(stream_id);
     if(!s)
@@ -139,6 +141,7 @@ void Http2Conversation::chunk(const std::string& ch)
 
 void Http2Conversation::onRequestError(const std::exception& ex)
 {
+    std::cout << "Http2Conversation::onRequestError " << ex.what() << std::endl;
 	promise_.reject(ex);
 	con_->close();
 	self_.reset();

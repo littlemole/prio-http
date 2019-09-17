@@ -209,6 +209,7 @@ int http2_session::send_connection_header()
 // stream has been closed
 int http2_session::on_stream_close_callback(int32_t stream_id, uint32_t error_code) 
 {
+    std::cout << "http2_session::on_stream_close_callback id: " << stream_id << std::endl;
     http2_stream* stream_data = get_stream_by_id(session_,stream_id);
     if (!stream_data) 
     {
@@ -219,6 +220,7 @@ int http2_session::on_stream_close_callback(int32_t stream_id, uint32_t error_co
     {
         if( (*it).get() == stream_data)
         {
+            std::cout << "http2_session::on_stream_close_callback erase id: " << (*it)->stream_id << std::endl;
             streams_.erase(it);
             return 0;
         }
@@ -294,6 +296,7 @@ ssize_t data_provider_callback(
 // start sending a response with given headers and response body
 int http2_server_session::send_response(int32_t stream_id,nghttp2_nv *nva, size_t nvlen)
 {
+    std::cout << "http2_server_session::send_response id: " << stream_id << std::endl;
     http2_server_stream* stream = get_stream_by_id(stream_id);
 
     nghttp2_data_provider data_prd;
@@ -406,6 +409,8 @@ int http2_server_session::on_request_recv(http2_stream* stream)
 http2_server_stream* http2_server_session::flush(Response& res)
 {        
     int stream_id = res.attributes.attr<int>(":http2:stream:id");    
+
+    std::cout << "http2_server_session::flush id: " << stream_id << std::endl;
  
     http2_server_stream* stream = get_stream_by_id(stream_id);
 
