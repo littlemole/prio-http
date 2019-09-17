@@ -162,8 +162,19 @@ Future<> http2_session::send()
     if(tmp.empty())
         return resolved();
 
-    write(tmp);
-    return resolved();
+   // write(tmp);
+
+    con_->con()->write(tmp)
+    .then([p](Connection::Ptr)
+    {
+       p.resolve();
+    })
+    .otherwise([p](const std::exception& ex)
+    {
+        //con_->onRequestError(ex);
+        p.reject(ex);
+    });   
+    return p.future();
 }
 
 // feed data received from socket to nghttp2
