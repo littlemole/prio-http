@@ -20,6 +20,7 @@ http2_stream::http2_stream(int32_t id,Conversation* con)
       stream_id(id),
       written(0)          
 {
+    std::cout << "new stream " << id << std::endl;
 }
 
 http2_stream::http2_stream(Request& request,Conversation* con)
@@ -44,7 +45,9 @@ http2_server_stream::http2_server_stream(int32_t id,Conversation* con)
 {}
 
 http2_server_stream::~http2_server_stream()
-{}
+{
+    std::cout << "delete stream " << stream_id << std::endl;
+}
 
 int http2_server_stream::on_header_callback(
     const nghttp2_frame *frame, 
