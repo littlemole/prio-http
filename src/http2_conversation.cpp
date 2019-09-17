@@ -100,7 +100,7 @@ void Http2Conversation::flush(Response& res)
     auto ptr = shared_from_this();
 
 	flusheaders_func_(stream->req,res)
-	.then( [ptr,stream,&res]()
+	.then( [ptr,stream,stream_id,&res]()
 	{
         auto s = ptr->http2_->flush(res);
         if(!s)
