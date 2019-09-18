@@ -84,20 +84,20 @@ void Http2Conversation::flush(Response& res)
     }
  
     auto stream = s->shared_from_this();
-    auto ptr = shared_from_this();
+    //auto ptr = shared_from_this();
 
 	stream->flusheaders_func(stream->req,res)
-	.then( [ptr,stream,stream_id,&res]()
+	.then( [this,stream,stream_id,&res]()
 	{
-        auto s = ptr->http2_->flush(res);
+        auto s = http2_->flush(res);
         if(!s)
         {
             std::cout << "stream id went away " << stream_id << std::endl;
             return;
         }
 
-        ptr->http2_->send()
-        .then([ptr,stream]()
+        http2_->send()
+        .then([this,stream]()
         {
             if(stream->completion_func)
             {
@@ -106,15 +106,15 @@ void Http2Conversation::flush(Response& res)
         
             if(stream->req.detached())
             {
-                ptr->self_.reset();
+                self_.reset();
                 return;
             }
         
             stream->reset();        
         })
-        .otherwise([ptr](const std::exception& ex)
+        .otherwise([this](const std::exception& ex)
         {
-            ptr->onRequestError(ex);
+            onRequestError(ex);
         });    
 
     });
