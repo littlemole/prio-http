@@ -24,8 +24,8 @@ public:
 
 	virtual bool keepAlive() = 0;
 	virtual void flush(Response& res) = 0;
-	virtual void onCompletion(std::function<void(Request& req, Response& res)> f) = 0;
-    virtual void onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f) = 0;
+	virtual void onCompletion(std::function<void(Request& req, Response& res)> f, Response& res) = 0;
+    virtual void onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f, Response& res) = 0;
 	virtual void chunk(const std::string& ch) = 0;
 	virtual prio::Connection::Ptr con() = 0;
 	virtual void onRequestError(const std::exception& s)  = 0;
@@ -66,8 +66,8 @@ public:
     ~HttpConversation();
 
 	virtual void flush(Response& res);
-    virtual void onCompletion(std::function<void(Request& req, Response& res)> f);
-    virtual void onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f);
+    virtual void onCompletion(std::function<void(Request& req, Response& res)> f, Response& res);
+    virtual void onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f, Response& res);
 	virtual void chunk(const std::string& ch);
 	virtual bool keepAlive();
 	virtual Connection::Ptr con();
@@ -123,8 +123,8 @@ public:
     ~SubRequest();
 
 	virtual void flush(Response& res);
-    virtual void onCompletion(std::function<void(Request& req, Response& res)> f);
-    virtual void onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f);
+    virtual void onCompletion(std::function<void(Request& req, Response& res)> f, Response& res);
+    virtual void onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f, Response& res);
 	virtual void chunk(const std::string& ch);
 	virtual bool keepAlive();
 	virtual Connection::Ptr con();

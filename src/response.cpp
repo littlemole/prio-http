@@ -257,13 +257,13 @@ HttpResponse& HttpResponse::reset()
 
 void HttpResponse::onCompletion(std::function<void(Request& req, Response& res)> f)
 {
-	http_->onCompletion(f);
+	http_->onCompletion(f,*this);
 }
 
 
 void HttpResponse::onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f)
 {
-	http_->onFlushHeaders(f);
+	http_->onFlushHeaders(f,*this);
 }
 
 } // close namespaces

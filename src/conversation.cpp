@@ -223,12 +223,12 @@ Connection::Ptr HttpConversation::con()
 	return con_;
 }
 
-void HttpConversation::onCompletion(std::function<void(Request& req, Response& res)> f)
+void HttpConversation::onCompletion(std::function<void(Request& req, Response& res)> f, Response& res)
 {
 	completion_func_ = f;
 }
 
-void HttpConversation::onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f)
+void HttpConversation::onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f, Response& res)
 {
 	flusheaders_func_ = f;
 }
@@ -294,13 +294,13 @@ Connection::Ptr SubRequest::con()
 	return empty;
 }
 
-void SubRequest::onCompletion(std::function<void(Request& req, Response& res)> f)
+void SubRequest::onCompletion(std::function<void(Request& req, Response& res)> f, Response& res)
 {
 	completion_func_ = f;
 }
 
 
-void SubRequest::onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f)
+void SubRequest::onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f, Response& res)
 {
 	flusheaders_func_ = f;
 }

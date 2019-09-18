@@ -18,7 +18,17 @@ LITTLE_MOLE_DECLARE_DEBUG_REF_CNT(server_connections);
 http2_stream::http2_stream(int32_t id,Conversation* con)
     : res(con),
       stream_id(id),
-      written(0)          
+      written(0),
+	  flusheaders_func( [](Request&,Response&)
+     {
+        auto p = repro::promise<>();
+        nextTick([p]()
+        {
+            p.resolve();
+        });
+        return p.future();
+     }),      
+     completion_func( [](Request&,Response&){})      
 {
     std::cout << "new stream " << id << std::endl;
 }
@@ -458,7 +468,7 @@ http2_server_stream* http2_server_session::flush(Response& res)
             res.headers.set(key,oss.str());
         }
     }
-    
+     
     // all custom headers
     auto& headers = res.headers.raw();
     for ( auto& h : headers)

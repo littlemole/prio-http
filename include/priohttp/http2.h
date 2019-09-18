@@ -49,6 +49,9 @@ struct http2_stream : public std::enable_shared_from_this<http2_stream>
     int32_t stream_id;         
     size_t written;            
     std::ostringstream oss;
+
+	std::function<repro::Future<>(Request& req, Response& res)> flusheaders_func;
+	std::function<void(Request& req, Response& res)> completion_func;    
 };
 
 struct http2_server_stream : public http2_stream
