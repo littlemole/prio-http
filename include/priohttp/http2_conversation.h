@@ -43,9 +43,6 @@ private:
 	Connection::Ptr con_;
 	PromiseType promise_;
 
-//	std::function<repro::Future<>(Request& req, Response& res)> flusheaders_func_;
-//	std::function<void(Request& req, Response& res)> completion_func_;
-
     Ptr self_;
     
     std::unique_ptr<http2_server_session> http2_;

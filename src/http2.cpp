@@ -29,9 +29,7 @@ http2_stream::http2_stream(int32_t id,Conversation* con)
         return p.future();
      }),      
      completion_func( [](Request&,Response&){})      
-{
-    std::cout << "new stream " << id << std::endl;
-}
+{}
 
 http2_stream::http2_stream(Request& request,Conversation* con)
 :   req(request),
@@ -55,9 +53,7 @@ http2_server_stream::http2_server_stream(int32_t id,Conversation* con)
 {}
 
 http2_server_stream::~http2_server_stream()
-{
-    std::cout << "delete stream " << stream_id << std::endl;
-}
+{}
 
 int http2_server_stream::on_header_callback(
     const nghttp2_frame *frame, 
@@ -131,10 +127,10 @@ ssize_t http2_server_stream::data_provider_callback(
 
 
 http2_session::http2_session(Conversation* c) 
-: con_(c),writing_(false)
+: con_(c)
 {}
 
-    http2_session::~http2_session() 
+http2_session::~http2_session() 
 {
     streams_.clear();
     nghttp2_session_del(session_);
@@ -172,8 +168,6 @@ Future<> http2_session::send()
     if(tmp.empty())
         return resolved();
 
-   // write(tmp);
-
     con_->con()->write(tmp)
     .then([p](Connection::Ptr)
     {
@@ -181,7 +175,6 @@ Future<> http2_session::send()
     })
     .otherwise([p](const std::exception& ex)
     {
-        //con_->onRequestError(ex);
         p.reject(ex);
     });   
     return p.future();
@@ -233,7 +226,6 @@ int http2_session::send_connection_header()
 // stream has been closed
 int http2_session::on_stream_close_callback(int32_t stream_id, uint32_t error_code) 
 {
-    std::cout << "http2_session::on_stream_close_callback id: " << stream_id << std::endl;
     http2_stream* stream_data = get_stream_by_id(session_,stream_id);
     if (!stream_data) 
     {
@@ -244,51 +236,12 @@ int http2_session::on_stream_close_callback(int32_t stream_id, uint32_t error_co
     {
         if( (*it).get() == stream_data)
         {
-            std::cout << "http2_session::on_stream_close_callback erase id: " << (*it)->stream_id << std::endl;
             streams_.erase(it);
             return 0;
         }
     }
     return 0;
 }
-
-bool http2_session::writing()
-{
-    return writing_;
-}
-
-void http2_session::write(const std::string& s)
-{
-    writes_.push_back(s);
-    write();
-}
-
-void http2_session::write()
-{
-    if(writing())
-        return;
-    
-    if(writes_.size() == 0)
-        return;
-
-    writing_ = true;
-
-    std::string s = writes_.front();
-    writes_.pop_front();
-
-    con_->con()->write(s)
-    .then([this](Connection::Ptr)
-    {
-        writing_ = false;
-        write();
-    })
-    .otherwise([this](const std::exception& ex)
-    {
-        writing_ = false;
-        con_->onRequestError(ex);
-    });
-}
-
 
 
 
@@ -303,9 +256,7 @@ http2_server_session::http2_server_session(Conversation* c)
 {}
   
 http2_server_session::~http2_server_session() 
-{
-}
-
+{}
 
 
 ssize_t data_provider_callback(
@@ -320,7 +271,6 @@ ssize_t data_provider_callback(
 // start sending a response with given headers and response body
 int http2_server_session::send_response(int32_t stream_id,nghttp2_nv *nva, size_t nvlen)
 {
-    std::cout << "http2_server_session::send_response id: " << stream_id << std::endl;
     http2_server_stream* stream = get_stream_by_id(stream_id);
 
     nghttp2_data_provider data_prd;
@@ -330,7 +280,6 @@ int http2_server_session::send_response(int32_t stream_id,nghttp2_nv *nva, size_
     int rv = nghttp2_submit_response(session_, stream_id, nva, nvlen, &data_prd);
     if (rv != 0) 
     {
-        //con_->onRequestError(repro::Ex("http2_server_session::send_response"));
         std::cout << "http2_server_session::send_response failed " << rv << std::endl;
         return -1;
     }
@@ -435,8 +384,6 @@ http2_server_stream* http2_server_session::flush(Response& res)
 {        
     int stream_id = res.attributes.attr<int>(":http2:stream:id");    
 
-    std::cout << "http2_server_session::flush id: " << stream_id << std::endl;
- 
     http2_server_stream* stream = get_stream_by_id(stream_id);
 
     std::vector<nghttp2_nv> hdrs;

@@ -114,15 +114,9 @@ public:
     
 protected:
 
-    bool writing();
-    void write(const std::string& s);
-    void write();
-
     nghttp2_session* session_;
     std::set<std::shared_ptr<http2_stream>> streams_;
     Conversation* con_;
-    bool writing_;
-    std::deque<std::string> writes_;
 }; 
 
 class http2_server_session : public http2_session

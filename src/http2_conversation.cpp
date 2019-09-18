@@ -18,17 +18,6 @@ Http2Conversation::Http2Conversation(Connection::Ptr f)
 	: 
 	  con_(f),
 	  promise_(repro::promise<Request&,Response&>()),
-/*	  flusheaders_func_( [](Request&,Response&)
-        {
-            auto p = repro::promise<>();
-            nextTick([p]()
-            {
-                p.resolve();
-            });
-            return p.future();
-        }),      
-      completion_func_( [](Request&,Response&){}),
-*/      
       http2_(std::make_unique<http2_server_session>(this))
 {
 	LITTLE_MOLE_ADDREF_DEBUG_REF_CNT(server_connections);
@@ -87,12 +76,9 @@ void Http2Conversation::flush(Response& res)
 {        
     int stream_id = res.attributes.attr<int>(":http2:stream:id");    
 
-    std::cout << "Http2Conversation::flush stream id: " << stream_id << std::endl;
- 
     http2_server_stream* s = http2_->get_stream_by_id(stream_id);
     if(!s)
     {
-        //onRequestError(repro::Ex("stream is gone"));
         std::cout << "stream id is gone " << stream_id << std::endl;
         return;
     }
@@ -106,12 +92,9 @@ void Http2Conversation::flush(Response& res)
         auto s = ptr->http2_->flush(res);
         if(!s)
         {
-            //ptr->onRequestError(repro::Ex("stream went away"));
             std::cout << "stream id went away " << stream_id << std::endl;
             return;
         }
-
-        //auto ptr_stream = stream->shared_from_this();
 
         ptr->http2_->send()
         .then([ptr,stream]()
@@ -144,7 +127,6 @@ void Http2Conversation::chunk(const std::string& ch)
 
 void Http2Conversation::onRequestError(const std::exception& ex)
 {
-    std::cout << "Http2Conversation::onRequestError " << ex.what() << std::endl;
 	promise_.reject(ex);
 	con_->close();
 	self_.reset();
@@ -164,12 +146,9 @@ void Http2Conversation::onCompletion(std::function<void(Request& req, Response& 
 {
     int stream_id = res.attributes.attr<int>(":http2:stream:id");    
 
-    std::cout << "Http2Conversation::flush stream id: " << stream_id << std::endl;
- 
     http2_server_stream* s = http2_->get_stream_by_id(stream_id);
     if(!s)
     {
-        //onRequestError(repro::Ex("stream is gone"));
         std::cout << "no stream id for onCompletion " << stream_id << std::endl;
         return;
     }
@@ -181,12 +160,9 @@ void Http2Conversation::onFlushHeaders(std::function<repro::Future<>(Request& re
 {
     int stream_id = res.attributes.attr<int>(":http2:stream:id");    
 
-    std::cout << "Http2Conversation::flush stream id: " << stream_id << std::endl;
- 
     http2_server_stream* s = http2_->get_stream_by_id(stream_id);
     if(!s)
     {
-        //onRequestError(repro::Ex("stream is gone"));
         std::cout << "no stream id for onFlushHeaders " << stream_id << std::endl;
         return;
     }
