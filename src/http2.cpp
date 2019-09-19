@@ -18,18 +18,10 @@ LITTLE_MOLE_DECLARE_DEBUG_REF_CNT(server_connections);
 http2_stream::http2_stream(int32_t id,Conversation* con)
     : res(con),
       stream_id(id),
-      written(0),
-	  flusheaders_func( [](Request&,Response&)
-     {
-        auto p = repro::promise<>();
-        nextTick([p]()
-        {
-            p.resolve();
-        });
-        return p.future();
-     }),      
-     completion_func( [](Request&,Response&){})      
-{}
+      written(0)
+{
+    reset_callbacks();
+}
 
 http2_stream::http2_stream(Request& request,Conversation* con)
 :   req(request),
@@ -46,6 +38,11 @@ void http2_stream::reset()
     oss.str("");
     oss.clear();
 
+    reset_callbacks();
+}    
+
+void http2_stream::reset_callbacks()
+{
 	flusheaders_func = [](Request&,Response&)
      {
         auto p = repro::promise<>();
@@ -57,8 +54,7 @@ void http2_stream::reset()
      };
 
      completion_func =  [](Request&,Response&){};      
-}    
-        
+}           
 
 http2_server_stream::http2_server_stream(int32_t id,Conversation* con)
     : http2_stream(id,con)

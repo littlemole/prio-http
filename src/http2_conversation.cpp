@@ -108,6 +108,7 @@ void Http2Conversation::flush(Response& res)
             if(stream->req.detached())
             {
                 self_.reset();
+                stream->reset_callbacks();
                 return;
             }
         
@@ -118,8 +119,6 @@ void Http2Conversation::flush(Response& res)
             onRequestError(ex);
             stream->reset();     
         });    
-        
-
     });
 }
 

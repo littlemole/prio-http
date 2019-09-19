@@ -42,6 +42,7 @@ struct http2_stream : public std::enable_shared_from_this<http2_stream>
         uint32_t *data_flags) = 0;
 
     void reset();
+    void reset_callbacks();
 
     Request req;
     Response res;    
