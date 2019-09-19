@@ -93,6 +93,7 @@ void Http2Conversation::flush(Response& res)
         if(!s)
         {
             std::cout << "stream id went away " << stream_id << std::endl;
+            stream->reset();     
             return;
         }
 
@@ -112,10 +113,12 @@ void Http2Conversation::flush(Response& res)
         
             stream->reset();        
         })
-        .otherwise([this](const std::exception& ex)
+        .otherwise([this,stream](const std::exception& ex)
         {
             onRequestError(ex);
+            stream->reset();     
         });    
+        
 
     });
 }

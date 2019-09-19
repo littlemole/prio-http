@@ -45,6 +45,18 @@ void http2_stream::reset()
     written = 0;
     oss.str("");
     oss.clear();
+
+	flusheaders_func = [](Request&,Response&)
+     {
+        auto p = repro::promise<>();
+        nextTick([p]()
+        {
+            p.resolve();
+        });
+        return p.future();
+     };
+
+     completion_func =  [](Request&,Response&){};      
 }    
         
 
