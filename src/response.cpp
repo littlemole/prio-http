@@ -112,6 +112,51 @@ Response& Response::redirect(const std::string& s, int code)
     return status(oss.str());
 }
 
+Response& Response::redirect(Request& req, const std::string& s, int code)
+{
+    std::ostringstream oss;
+
+    if( req.headers.exists("X-Forwarded-proto"))
+    {
+        oss << req.headers.get("X-Forwarded-proto");
+    }
+    else
+    {
+        if( req.attributes.attr<bool>("is_secure") )
+        {
+            oss << "https";
+        }
+        else{
+            oss << "http";
+        }
+    }
+
+    oss << "://";
+
+    if( req.headers.exists("X-Forwarded-Host"))
+    {
+        oss << req.headers.get("X-Forwarded-Host");
+    }
+    else
+    {
+        oss << req.headers.get("Host");
+    }
+
+    oss << ":";
+
+    if( req.headers.exists("X-Forwarded-port"))
+    {
+        oss << req.headers.get("X-Forwarded-port");
+    }
+    else
+    {
+        oss << req.attributes.attr<int>("server_port");
+    }
+
+    oss << s;
+
+    return redirect(oss.str(),code);
+}
 
 const std::string& Response::status() const noexcept
 {

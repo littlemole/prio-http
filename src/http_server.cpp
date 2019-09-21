@@ -11,14 +11,14 @@ namespace prio  {
 
 
 http_server::http_server()
- : promise_(repro::promise<Request&,Response&>())
+ : promise_(repro::promise<Request&,Response&>()), isSecure_(false)
 {
 	listener_ = std::make_shared<Listener>();
 }
 
 
 http_server::http_server(prio::SslCtx& ctx)
- : promise_(repro::promise<Request&,Response&>())
+ : promise_(repro::promise<Request&,Response&>()), isSecure_(true)
 {
 	listener_ = std::make_shared<Listener>(ctx);	
 }
@@ -36,15 +36,15 @@ void http_server::shutdown()
 http_server::FutureType http_server::bind(int port)
 {
 	listener_->bind(port)
-	.then( [this](Connection::Ptr client)
+	.then( [this,port](Connection::Ptr client)
 	{
 		if(client->isHttp2Requested())
 		{
-			onAccept2(client);			
+			onAccept2(client,port);			
 		}
 		else
 		{
-			onAccept(client);			
+			onAccept(client,port);			
 		}
 	})
 	.otherwise([](const std::exception& ex){
@@ -53,13 +53,16 @@ http_server::FutureType http_server::bind(int port)
 	return promise_.future();
 }
     
-void http_server::onAccept(Connection::Ptr client)
+void http_server::onAccept(Connection::Ptr client, int port)
 {
     try 
     {
 		HttpConversation::on(client)
-		.then( [this] (Request& req, Response& res) 
+		.then( [this,port] (Request& req, Response& res) 
 		{
+			req.attributes.set("server_port",port);
+			req.attributes.set("is_secure",isSecure_);
+
 			promise_.resolve(req,res);
 		})
 		.otherwise( [this] (const std::exception& ex) 
@@ -73,13 +76,16 @@ void http_server::onAccept(Connection::Ptr client)
     }  
 } 
 
-void http_server::onAccept2(Connection::Ptr client)
+void http_server::onAccept2(Connection::Ptr client, int port)
 {
     try 
     {
 		Http2Conversation::on(client)
-		.then( [this] (Request& req, Response& res) 
+		.then( [this,port] (Request& req, Response& res) 
 		{
+			req.attributes.set("server_port",port);
+			req.attributes.set("is_secure",isSecure_);
+
 			promise_.resolve(req,res);
 		})
 		.otherwise( [this] (const std::exception& ex) 

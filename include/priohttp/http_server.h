@@ -31,12 +31,13 @@ private:
     http_server(const http_server& rhs) = delete;
     http_server& operator=(const http_server& rhs) = delete;
 
-    void onAccept(Connection::Ptr);
-    void onAccept2(Connection::Ptr);
+    void onAccept(Connection::Ptr, int port);
+    void onAccept2(Connection::Ptr, int port);
     
     PromiseType promise_;
 
     std::shared_ptr<Listener> listener_;
+    bool isSecure_;
 };
 
 
