@@ -63,8 +63,8 @@ public:
     Response& not_found();
     //! send an absolute HTTP redirect
     Response& redirect(const std::string& s, int code = 302);
-    //! send a relative HTTP redirect using initial protocol, port and host domain name
-    //! honors X-Forwarded-proto, X-Forwarded-Host and X-Forwarded-port if present
+    //! send a relative HTTP redirect using initial protocol and host domain name
+    //! honors X-Forwarded-proto and X-Forwarded-Host a if present
     Response& redirect(Request& req, const std::string& s, int code = 302);
 
     //! enable gzip compression for response    

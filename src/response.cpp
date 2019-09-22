@@ -142,17 +142,6 @@ Response& Response::redirect(Request& req, const std::string& s, int code)
         oss << req.headers.get("Host");
     }
 
-    oss << ":";
-
-    if( req.headers.exists("X-Forwarded-port"))
-    {
-        oss << req.headers.get("X-Forwarded-port");
-    }
-    else
-    {
-        oss << req.attributes.attr<int>("server_port");
-    }
-
     oss << s;
 
     return redirect(oss.str(),code);
