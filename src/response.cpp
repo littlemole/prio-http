@@ -241,6 +241,10 @@ void HttpResponse::flushHeaders()
         std::string val = oss.str();
         headers.set(key,val);
     }
+    if( headers.get("Content-Length") == "-")
+    {
+        headers.remove("Content-Length");
+    }
 
     if( isChunked_ )
     {

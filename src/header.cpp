@@ -167,6 +167,20 @@ bool Headers::exists(const std::string& key) const noexcept
     return false;
 }
 
+
+Headers& Headers::remove(const std::string& key) noexcept
+{
+	for ( auto it = headers_.begin(); it != headers_.end(); it++)
+    {
+        if ( strcasecmp((*it).first.c_str(), key.c_str()) == 0 )
+        {
+			headers_.erase(it);
+            return *this;
+        }
+    }
+    return *this;
+}
+
 Headers& Headers::set(const std::string& key, const std::string& val)
 {
     headers_.push_back( header_t(key,val) );

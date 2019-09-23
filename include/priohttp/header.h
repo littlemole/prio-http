@@ -100,6 +100,8 @@ public:
     //! set arbitary HTTP header
     Headers& set(const std::string& key, const std::string& value) ;
 
+    Headers& remove(const std::string& key) noexcept;
+
     //! clear HTTP headers
     void reset() noexcept;
 
