@@ -15,6 +15,8 @@ class HttpClientConversation : public ReaderWriterConversation, public std::enab
 {
 public:
 
+	LITTLE_MOLE_MONITOR(HttpClientConversation);
+
 	typedef std::shared_ptr<HttpClientConversation> Ptr;
 	typedef repro::Promise<Request&,Response&> PromiseType;
 	typedef repro::Future<Request&,Response&> FutureType;
@@ -72,6 +74,9 @@ private:
 class Http2ClientConversation : public Conversation, public std::enable_shared_from_this<Http2ClientConversation>
 {
 public:
+
+	LITTLE_MOLE_MONITOR(Http2ClientConversation);
+
 
 	typedef std::shared_ptr<Http2ClientConversation> Ptr;
 	typedef repro::Promise<Request&,Response&> PromiseType;

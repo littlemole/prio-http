@@ -14,8 +14,6 @@ using namespace repro;
 
 namespace prio  {
 
-LITTLE_MOLE_DECLARE_DEBUG_REF_CNT(server_connections);
-
 
 HttpConversation::HttpConversation(Connection::Ptr f)
 	: req(this),
@@ -38,12 +36,10 @@ HttpConversation::HttpConversation(Connection::Ptr f)
 	reader_.reset(new HttpHeaderReader(this));
 	writer_.reset(new HttpPlainBodyWriter(this));
 
-	LITTLE_MOLE_ADDREF_DEBUG_REF_CNT(server_connections);
 }
  
 HttpConversation::~HttpConversation()
 {
-	LITTLE_MOLE_RELEASE_DEBUG_REF_CNT(server_connections);
 }
 
 HttpConversation::FutureType HttpConversation::on(Connection::Ptr s)

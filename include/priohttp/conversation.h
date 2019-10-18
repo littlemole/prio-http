@@ -54,6 +54,8 @@ class HttpConversation : public Conversation, public ReaderWriterConversation, p
 {
 public:
 
+	LITTLE_MOLE_MONITOR(HttpConversations);
+
 	typedef std::shared_ptr<HttpConversation> Ptr;
 	typedef repro::Promise<Request&,Response&> PromiseType;
 	typedef repro::Future<Request&,Response&> FutureType;

@@ -5,8 +5,6 @@
 namespace prio  {
 
 
-LITTLE_MOLE_DECLARE_DEBUG_REF_CNT(client_connections);
-
 
 class ClientHttpReader
 {
@@ -450,13 +448,11 @@ HttpClientConversation::HttpClientConversation(Connection::Ptr client,Request& r
 	  keep_alive_(false)
 {
 	reader_.reset( new ClientHttpHeaderReader(this));
-	LITTLE_MOLE_ADDREF_DEBUG_REF_CNT(client_connections);
 
 }
  
 HttpClientConversation::~HttpClientConversation()
 {
-	LITTLE_MOLE_RELEASE_DEBUG_REF_CNT(client_connections);
 }
 
 HttpClientConversation::FutureType HttpClientConversation::on(Connection::Ptr client,Request& req)
@@ -593,12 +589,10 @@ Http2ClientConversation::Http2ClientConversation(Connection::Ptr client,Request&
 	keep_alive_(false),
 	http2_(new http2_client_session(this))
 {
-	LITTLE_MOLE_ADDREF_DEBUG_REF_CNT(client_connections);
 }
 
 Http2ClientConversation::~Http2ClientConversation()
 {
-	LITTLE_MOLE_RELEASE_DEBUG_REF_CNT(client_connections);
 }
 
 Http2ClientConversation::FutureType Http2ClientConversation::on(Connection::Ptr client,Request& req)

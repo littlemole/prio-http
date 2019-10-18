@@ -12,6 +12,8 @@ class Http2Conversation : public Conversation, public std::enable_shared_from_th
 friend class http2_session;
 public:
 
+	LITTLE_MOLE_MONITOR(Http2Conversations);
+
 	typedef std::shared_ptr<Http2Conversation> Ptr;
 	typedef repro::Promise<Request&,Response&> PromiseType;
 	typedef repro::Future<Request&,Response&> FutureType;

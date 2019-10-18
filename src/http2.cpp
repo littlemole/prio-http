@@ -12,8 +12,6 @@ using namespace repro;
 
 namespace prio  {
 
-LITTLE_MOLE_DECLARE_DEBUG_REF_CNT(server_connections);
-
 
 http2_stream::http2_stream(int32_t id,Conversation* con)
     : res(con),

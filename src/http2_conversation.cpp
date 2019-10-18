@@ -11,7 +11,6 @@
 
 namespace prio  {
 
-LITTLE_MOLE_DECLARE_DEBUG_REF_CNT(server_connections);
 
 
 Http2Conversation::Http2Conversation(Connection::Ptr f)
@@ -20,12 +19,10 @@ Http2Conversation::Http2Conversation(Connection::Ptr f)
 	  promise_(repro::promise<Request&,Response&>()),
       http2_(std::make_unique<http2_server_session>(this))
 {
-	LITTLE_MOLE_ADDREF_DEBUG_REF_CNT(server_connections);
 }
  
 Http2Conversation::~Http2Conversation()
 {
-	LITTLE_MOLE_RELEASE_DEBUG_REF_CNT(server_connections);
 }
 
 Http2Conversation::FutureType Http2Conversation::on(Connection::Ptr s)
