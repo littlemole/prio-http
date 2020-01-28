@@ -22,7 +22,7 @@ public:
 
     ~Http2Conversation();
 
-	virtual void flush(Response& res);
+	virtual repro::Future<> flush(Response& res);
     virtual void onCompletion(std::function<void(Request& req, Response& res)> f, Response& res);
 	virtual void onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f, Response& res);
 	virtual void chunk(const std::string& ch);

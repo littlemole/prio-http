@@ -6,8 +6,10 @@
 namespace prio  {
 
 
-void HttpPlainBodyWriter::flush()
+repro::Future<> HttpPlainBodyWriter::flush()
 {
+	auto p = repro::promise();
+
 	HttpResponse& response = (HttpResponse&)(con_->response());
 
 	response.flushHeaders();
@@ -19,14 +21,18 @@ void HttpPlainBodyWriter::flush()
 	{
 		return con_->write(payload);
 	})
-	.then( [this]()
+	.then( [this,p]()
 	{
 		con_->onResponseComplete("");
+		p.resolve();
 	})
-	.otherwise( [this](const std::exception& ex)
+	.otherwise( [this,p](const std::exception& ex)
 	{
 		con_->onRequestError(ex);
+		p.resolve();
 	});
+
+	return p.future();
 }
 
 void HttpPlainBodyWriter::write(const std::string& c)
@@ -41,12 +47,21 @@ HttpChunkedBodyWriter::HttpChunkedBodyWriter(ReaderWriterConversation* c)
 }
 
 
-void HttpChunkedBodyWriter::flush()
+repro::Future<> HttpChunkedBodyWriter::flush()
 {
+	auto p = repro::promise();
+
 	done_ = true;
 
 	chunks_.push_back("0\r\n\r\n");
 	chunkResponse();
+
+	nextTick([p]()
+	{
+		p.resolve();
+	});
+
+	return p.future();
 }
 
 void HttpChunkedBodyWriter::write(const std::string& c)
@@ -118,7 +133,7 @@ void HttpChunkedBodyWriter::chunkResponse()
 	});
 }
 
-void HttpGzippedBodyWriter::flush()
+repro::Future<> HttpGzippedBodyWriter::flush()
 {
 	HttpBodyWriter* w = (HttpBodyWriter*)wrapped_.get();
 	HttpResponse& response = (HttpResponse&)(w->res());
@@ -137,7 +152,7 @@ void HttpGzippedBodyWriter::flush()
 		w->res().body(oss.str());
 	}
 	
-	w->flush();
+	return w->flush();	
 }
 
 void HttpGzippedBodyWriter::write(const std::string& c)

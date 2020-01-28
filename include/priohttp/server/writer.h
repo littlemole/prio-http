@@ -16,7 +16,7 @@ public:
 
 	virtual ~HttpWriter() {}
 
-	virtual void flush() = 0;
+	virtual repro::Future<> flush() = 0;
 	virtual void write(const std::string& c) = 0;
 
 };
@@ -31,7 +31,7 @@ public:
 
 	virtual ~HttpBodyWriter() {}
 
-	virtual void flush() = 0;
+	virtual repro::Future<> flush() = 0;
 	virtual void write(const std::string& c) = 0;
 
 	Request& req() { return con_->request();   }
@@ -54,7 +54,7 @@ public:
 
 	virtual ~HttpPlainBodyWriter() {}
 
-	virtual void flush();
+	virtual repro::Future<> flush();
 	virtual void write(const std::string& c);
 
 };
@@ -67,7 +67,7 @@ public:
 
 	virtual ~HttpChunkedBodyWriter() {}
 
-	virtual void flush();
+	virtual repro::Future<> flush();
 	virtual void write(const std::string& c);
 
 private:
@@ -89,7 +89,7 @@ public:
 
 	virtual ~HttpGzippedBodyWriter() {}
 
-	virtual void flush();
+	virtual repro::Future<> flush();
 	virtual void write(const std::string& c);
 
 private:

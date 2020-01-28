@@ -23,7 +23,7 @@ public:
 	virtual ~Conversation() {}
 
 	virtual bool keepAlive() = 0;
-	virtual void flush(Response& res) = 0;
+	virtual repro::Future<> flush(Response& res) = 0;
 	virtual void onCompletion(std::function<void(Request& req, Response& res)> f, Response& res) = 0;
     virtual void onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f, Response& res) = 0;
 	virtual void chunk(const std::string& ch) = 0;
@@ -67,7 +67,7 @@ public:
 
     ~HttpConversation();
 
-	virtual void flush(Response& res);
+	virtual repro::Future<> flush(Response& res);
     virtual void onCompletion(std::function<void(Request& req, Response& res)> f, Response& res);
     virtual void onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f, Response& res);
 	virtual void chunk(const std::string& ch);
@@ -124,7 +124,7 @@ public:
 	SubRequest();
     ~SubRequest();
 
-	virtual void flush(Response& res);
+	virtual repro::Future<> flush(Response& res);
     virtual void onCompletion(std::function<void(Request& req, Response& res)> f, Response& res);
     virtual void onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f, Response& res);
 	virtual void chunk(const std::string& ch);

@@ -46,12 +46,19 @@ Response& Response::cookie(const Cookie& c)
     return *this;
 }
 
-void Response::flush()
+repro::Future<> Response::flush()
 {
 	if(http_)
 	{
-		http_->flush(*this);
+		return http_->flush(*this);
 	}
+
+    auto p = repro::promise();
+    nextTick([p]()
+    {
+        p.resolve();
+    });
+    return p.future();
 }
 
 

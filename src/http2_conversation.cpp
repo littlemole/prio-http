@@ -69,33 +69,37 @@ void Http2Conversation::resolve(Request& req, Response& res)
     promise_.resolve(req,res);
 }
 
-void Http2Conversation::flush(Response& res)
-{        
+repro::Future<> Http2Conversation::flush(Response& res)
+{  
+    auto p = repro::promise();
+
     int stream_id = res.attributes.attr<int>(":http2:stream:id");    
 
     http2_server_stream* s = http2_->get_stream_by_id(stream_id);
     if(!s)
     {
         std::cout << "stream id is gone " << stream_id << std::endl;
-        return;
+        nextTick([p](){ p.resolve(); });
+        return p.future();
     }
  
     auto stream = s->shared_from_this();
     //auto ptr = shared_from_this();
 
 	stream->flusheaders_func(stream->req,res)
-	.then( [this,stream,stream_id,&res]()
+	.then( [this,p,stream,stream_id,&res]()
 	{
         auto s = http2_->flush(res);
         if(!s)
         {
             std::cout << "stream id went away " << stream_id << std::endl;
             stream->reset();     
+            p.resolve();
             return;
         }
 
         http2_->send()
-        .then([this,stream]()
+        .then([this,p,stream]()
         {
             if(stream->completion_func)
             {
@@ -106,17 +110,22 @@ void Http2Conversation::flush(Response& res)
             {
                 self_.reset();
                 stream->reset_callbacks();
+                p.resolve();
                 return;
             }
-        
+
+            p.resolve();
             stream->reset();        
         })
-        .otherwise([this,stream](const std::exception& ex)
+        .otherwise([this,p,stream](const std::exception& ex)
         {
             onRequestError(ex);
             stream->reset();     
+            p.resolve();
         });    
     });
+
+    return p.future();
 }
 
 void Http2Conversation::chunk(const std::string& ch)

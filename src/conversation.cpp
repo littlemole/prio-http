@@ -93,8 +93,10 @@ void HttpConversation::resolve(Request& req, Response& res)
     promise_.resolve(req,res);
 }
 
-void HttpConversation::flush(Response& res)
+repro::Future<> HttpConversation::flush(Response& res)
 {
+	auto p = repro::promise();
+
 	flusheaders_func_(req,res)
 	.then( [this,&res]()
 	{
@@ -102,8 +104,14 @@ void HttpConversation::flush(Response& res)
 		{
 			writer_.reset( new HttpGzippedBodyWriter(new HttpPlainBodyWriter(this)));
 		}
-		writer_->flush();
+		return writer_->flush();
+	})
+	.then([p]()
+	{
+		p.resolve();
 	});
+
+	return p.future();
 }
 
 void HttpConversation::chunk(const std::string& ch)
@@ -266,11 +274,19 @@ void SubRequest::resolve(Request& req, Response& res)
     promise_.resolve(req,res);
 }
 
-void SubRequest::flush(Response& res)
+repro::Future<> SubRequest::flush(Response& res)
 {
-	resolve(req,res);
-	completion_func_(req,res);
-	self_.reset();
+	auto p = repro::promise();
+
+	nextTick([this,p]()
+	{ 
+		resolve(this->req,this->res);
+		completion_func_(this->req,this->res);
+		self_.reset();
+		p.resolve(); 
+	});
+
+	return p.future();
 }
 
 void SubRequest::chunk(const std::string& ch)

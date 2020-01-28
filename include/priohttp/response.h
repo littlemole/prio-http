@@ -89,7 +89,7 @@ public:
     void chunk(const std::string& ch);
 
     //! done with HTTP response construction, send it over the wire asynchronously
-    void flush();
+    repro::Future<> flush();
 
     //! check whether chunked response was enabled
     bool isChunked() { return isChunked_; }
