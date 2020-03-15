@@ -61,8 +61,8 @@ std::string Urlencode::encode(const char* in, int n)
         }
         pInTmp++;
     }
-    *pOutTmp = '\0';
-	out = buf.toString();
+    *pOutTmp = 0;//'\0';
+	out = buf.toString(pOutTmp-&buf);
     return out;
 }
 
