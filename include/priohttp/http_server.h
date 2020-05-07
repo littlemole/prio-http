@@ -15,14 +15,14 @@ class http_server
 {
 public:
 
-	typedef repro::Promise<Request&,Response&> PromiseType;
-	typedef repro::Future<Request&,Response&> FutureType;
+	//typedef repro::Promise<Request&,Response&> PromiseType;
+	//typedef repro::Future<Request&,Response&> FutureType;
 
 	http_server();
 	http_server(prio::SslCtx& ctx);
 	~http_server();
 
-    FutureType bind(int port);
+    prio::Callback<Request&,Response&>& bind(int port);
 
     void shutdown();
     
@@ -34,7 +34,8 @@ private:
     void onAccept(Connection::Ptr, int port);
     void onAccept2(Connection::Ptr, int port);
     
-    PromiseType promise_;
+   // PromiseType promise_;
+    prio::Callback<Request&,Response&> cb_;
 
     std::shared_ptr<Listener> listener_;
     bool isSecure_;

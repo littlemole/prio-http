@@ -25,14 +25,14 @@ HttpClient::Ptr HttpClient::url(prio::SslCtx& ctx,const std::string& url)
 	return result;
 }
 
-Future<Response&> HttpClient::GET()
+prio::Callback<Response&>& HttpClient::GET()
 {
 	method_ = "GET";
 	return fetch();
 }
 
 
-Future<Response&> HttpClient::POST(const std::string& b)
+prio::Callback<Response&>& HttpClient::POST(const std::string& b)
 {
 	method_ = "POST";
 	body(b);
@@ -40,7 +40,7 @@ Future<Response&> HttpClient::POST(const std::string& b)
 }
 
 
-Future<Response&> HttpClient::PUT( const std::string& b)
+prio::Callback<Response&>& HttpClient::PUT( const std::string& b)
 {
 	body(b);
 	method_ = "PUT";
@@ -48,7 +48,7 @@ Future<Response&> HttpClient::PUT( const std::string& b)
 }
 
 
-Future<Response&> HttpClient::DEL()
+prio::Callback<Response&>&HttpClient::DEL()
 {
 	method_ = "DELETE";
 	return fetch();
@@ -100,11 +100,9 @@ HttpClient::Ptr HttpClient::keepAlive(bool b)
 	return shared_from_this();
 }
 
-Future<Response&> HttpClient::fetch()
+prio::Callback<Response&>&HttpClient::fetch()
 {
 	HttpRequest& req = (HttpRequest&)request;
-
-	auto p = repro::promise<Response&>();
 
 	self_ = shared_from_this();
 
@@ -141,25 +139,37 @@ Future<Response&> HttpClient::fetch()
 		oss << method_ << " " << dest_.getFullPath() << " " << proto_;
 		req.action(oss.str());
 
+		prio::Callback<Request&,Response&>* cb;
+
 		if(client->isHttp2Requested())
 		{
-			return Http2ClientConversation::on(client,request);
+			auto& tmp =  Http2ClientConversation::on(client,request);
+			cb = &tmp;
+		}
+		else
+		{
+			auto& tmp = HttpClientConversation::on(client,request);
+			cb = &tmp;
 		}
 
-		return HttpClientConversation::on(client,request);
+		cb->then( [this](Request& req,Response& res)
+		{
+			cb_.resolve(res);
+			self_.reset();
+		})
+		.otherwise( [this](const std::exception_ptr& ex)
+		{
+			cb_.reject(ex);
+			self_.reset();
+		});
 	})
-	.then( [p,this](Request& req,Response& res)
+	.otherwise( [this](const std::exception_ptr& ex)
 	{
-		p.resolve(res);
-		self_.reset();
-	})
-	.otherwise( [p,this](const std::exception& ex)
-	{
-		p.reject(ex);
+		cb_.reject(ex);
 		self_.reset();
 	});
 
-	return p.future();
+	return cb_;
 }
 
 

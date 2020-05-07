@@ -15,7 +15,7 @@ void ServerHttpReader::read()
 	{
 		consume(s);
 	})
-	.otherwise( [this](const std::exception& ex)
+	.otherwise( [this](const std::exception_ptr& ex)
 	{
 		con_->onRequestError(ex);
 	});
@@ -51,7 +51,7 @@ void HttpHeaderReader::consume(const std::string& s)
 			parse_headers();
 			con_->onHeadersComplete(body_stream_);
 		}
-		catch(const std::exception& ex)
+		catch(const std::exception_ptr& ex)
 		{
 			con_->onRequestError(ex);
 		}

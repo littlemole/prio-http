@@ -26,10 +26,10 @@ public:
 	static HttpClient::Ptr url(const std::string& url);
 	static HttpClient::Ptr url(prio::SslCtx& ctx,const std::string& url);
 
-	repro::Future<Response&> GET();
-	repro::Future<Response&> POST(const std::string& body);
-	repro::Future<Response&> PUT( const std::string& body);
-	repro::Future<Response&> DEL();
+	prio::Callback<Response&>& GET();
+	prio::Callback<Response&>& POST(const std::string& body);
+	prio::Callback<Response&>& PUT( const std::string& body);
+	prio::Callback<Response&>& DEL();
 
 	HttpClient::Ptr header(const std::string& h, const std::string& v);
 	HttpClient::Ptr accept(const std::string& v);
@@ -39,9 +39,11 @@ public:
 	HttpClient::Ptr body(const std::string& v);
 	HttpClient::Ptr keepAlive(bool b);
 
-	repro::Future<Response&> fetch();
+	prio::Callback<Response&>& fetch();
 
 private:
+
+	prio::Callback<Response&> cb_;
 
 	HttpClient(const prio::Url& u)
 	: dest_(u),proto_("HTTP/1.0"),keep_alive_(false),ctx_(nullptr)

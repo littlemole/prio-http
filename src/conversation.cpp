@@ -19,7 +19,7 @@ HttpConversation::HttpConversation(Connection::Ptr f)
 	: req(this),
 	  res(this),
 	  con_(f),
-	  promise_(repro::promise<Request&,Response&>()),
+	  //promise_(repro::promise<Request&,Response&>()),
 	  keep_alive_(false),
 	  flusheaders_func_( [](Request&,Response&)
 	  {
@@ -36,20 +36,22 @@ HttpConversation::HttpConversation(Connection::Ptr f)
 	reader_.reset(new HttpHeaderReader(this));
 	writer_.reset(new HttpPlainBodyWriter(this));
 
+	REPRO_MONITOR_INCR(HttpConversation);
 }
  
 HttpConversation::~HttpConversation()
 {
+	REPRO_MONITOR_DECR(HttpConversation);
 }
 
-HttpConversation::FutureType HttpConversation::on(Connection::Ptr s)
+prio::Callback<Request&,Response&>&  HttpConversation::on(Connection::Ptr s)
 {
 	auto r =  Ptr( new HttpConversation(s));
 	r->self_ = r;
 
 	r->reader_->consume("");
 
-	return r->promise_.future();
+	return r->cb_;//promise_.future();
 }
 
 
@@ -62,7 +64,7 @@ Future<std::string> HttpConversation::read()
 	{
 		p.resolve(s);
 	})
-	.otherwise([p](const std::exception& ex)
+	.otherwise([p](const std::exception_ptr& ex)
 	{
 		p.reject(ex);
 	});
@@ -79,7 +81,7 @@ Future<> HttpConversation::write(const std::string& s)
 	{
 		p.resolve();
 	})
-	.otherwise([p](const std::exception& ex)
+	.otherwise([p](const std::exception_ptr& ex)
 	{
 		p.reject(ex);
 	});
@@ -90,7 +92,7 @@ Future<> HttpConversation::write(const std::string& s)
 
 void HttpConversation::resolve(Request& req, Response& res)
 { 
-    promise_.resolve(req,res);
+    cb_.resolve(req,res);
 }
 
 repro::Future<> HttpConversation::flush(Response& res)
@@ -179,7 +181,7 @@ void HttpConversation::onRequestComplete(const std::string& b)
 
 	keep_alive_ = req.keep_alive();
 
-	promise_.resolve(req,res);
+	cb_.resolve(req,res);
 }
 
 void HttpConversation::onResponseComplete(const std::string&)
@@ -215,9 +217,9 @@ void HttpConversation::onResponseComplete(const std::string&)
 	}
 }
 
-void HttpConversation::onRequestError(const std::exception& ex)
+void HttpConversation::onRequestError(const std::exception_ptr& ex)
 {
-	promise_.reject(ex);
+	cb_.reject(ex);
 	con_->close();
 	self_.reset();
 }
@@ -249,7 +251,7 @@ bool HttpConversation::keepAlive()
 SubRequest::SubRequest()
 	: req(this),
 	  res(this),
-	  promise_(repro::promise<Request&,Response&>()),
+	  //promise_(repro::promise<Request&,Response&>()),
 	  completion_func_( [](Request&,Response&){})
 {
 }
@@ -258,20 +260,20 @@ SubRequest::~SubRequest()
 {
 }
 
-SubRequest::FutureType SubRequest::on(const Request& request, const std::string& path)
+prio::Callback<Request&,Response&>& SubRequest::on(const Request& request, const std::string& path)
 {
 	req.path = request.path;
 	req.headers = request.headers;
 	req.path.path(path);
 	self_ = shared_from_this();
 
-	return promise_.future();
+	return cb_;// promise_.future();
 }
 
 
 void SubRequest::resolve(Request& req, Response& res)
 { 
-    promise_.resolve(req,res);
+    cb_.resolve(req,res);
 }
 
 repro::Future<> SubRequest::flush(Response& res)
@@ -294,9 +296,9 @@ void SubRequest::chunk(const std::string& ch)
 	res.body(res.body()+ ch);
 }
 
-void SubRequest::onRequestError(const std::exception& ex)
+void SubRequest::onRequestError(const std::exception_ptr& ex)
 {
-	promise_.reject(ex);
+	cb_.reject(ex);
 	self_.reset();
 }
 

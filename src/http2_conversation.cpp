@@ -16,16 +16,18 @@ namespace prio  {
 Http2Conversation::Http2Conversation(Connection::Ptr f)
 	: 
 	  con_(f),
-	  promise_(repro::promise<Request&,Response&>()),
+	 // promise_(repro::promise<Request&,Response&>()),
       http2_(std::make_unique<http2_server_session>(this))
 {
+    REPRO_MONITOR_INCR(Http2Conversation);    
 }
  
 Http2Conversation::~Http2Conversation()
 {
+    REPRO_MONITOR_DECR(Http2Conversation);    
 }
 
-Http2Conversation::FutureType Http2Conversation::on(Connection::Ptr s)
+prio::Callback<Request&,Response&>& Http2Conversation::on(Connection::Ptr s)
 {
 	auto r =  Ptr( new Http2Conversation(s));
 	r->self_ = r;
@@ -37,12 +39,12 @@ Http2Conversation::FutureType Http2Conversation::on(Connection::Ptr s)
     {
        r->schedule_read();
     })
-    .otherwise([r](const std::exception& ex)
+    .otherwise([r](const std::exception_ptr& ex)
 	{
 		r->onRequestError(ex);
 	});     
     
-	return r->promise_.future();
+	return r->cb_;//r->promise_.future();
 }
 
 void Http2Conversation::schedule_read()
@@ -58,7 +60,7 @@ void Http2Conversation::schedule_read()
     {
         ptr->schedule_read();
     })
-    .otherwise([ptr](const std::exception& ex)
+    .otherwise([ptr](const std::exception_ptr& ex)
 	{
 		ptr->onRequestError(ex);
 	}); 
@@ -66,7 +68,7 @@ void Http2Conversation::schedule_read()
 
 void Http2Conversation::resolve(Request& req, Response& res)
 { 
-    promise_.resolve(req,res);
+    cb_.resolve(req,res);
 }
 
 repro::Future<> Http2Conversation::flush(Response& res)
@@ -117,7 +119,7 @@ repro::Future<> Http2Conversation::flush(Response& res)
             p.resolve();
             stream->reset();        
         })
-        .otherwise([this,p,stream](const std::exception& ex)
+        .otherwise([this,p,stream](const std::exception_ptr& ex)
         {
             onRequestError(ex);
             stream->reset();     
@@ -133,9 +135,9 @@ void Http2Conversation::chunk(const std::string& ch)
    // TODO ?
 }
 
-void Http2Conversation::onRequestError(const std::exception& ex)
+void Http2Conversation::onRequestError(const std::exception_ptr& ex)
 {
-	promise_.reject(ex);
+	cb_.reject(ex);
 	con_->close();
 	self_.reset();
 }

@@ -11,14 +11,16 @@ namespace prio  {
 
 
 http_server::http_server()
- : promise_(repro::promise<Request&,Response&>()), isSecure_(false)
+ : //promise_(repro::promise<Request&,Response&>()), 
+ 	isSecure_(false)
 {
 	listener_ = std::make_shared<Listener>();
 }
 
 
 http_server::http_server(prio::SslCtx& ctx)
- : promise_(repro::promise<Request&,Response&>()), isSecure_(true)
+ : //promise_(repro::promise<Request&,Response&>()), 
+ 	isSecure_(true)
 {
 	listener_ = std::make_shared<Listener>(ctx);	
 }
@@ -33,7 +35,7 @@ void http_server::shutdown()
 	listener_->cancel();
 }
 
-http_server::FutureType http_server::bind(int port)
+prio::Callback<Request&,Response&>& http_server::bind(int port)
 {
 	listener_->bind(port)
 	.then( [this,port](Connection::Ptr client)
@@ -50,7 +52,7 @@ http_server::FutureType http_server::bind(int port)
 	.otherwise([](const std::exception& ex){
 		std::cerr << "http_server ex: " << ex.what() << std::endl;
 	});	
-	return promise_.future();
+	return cb_;
 }
     
 void http_server::onAccept(Connection::Ptr client, int port)
@@ -63,11 +65,11 @@ void http_server::onAccept(Connection::Ptr client, int port)
 			req.attributes.set("server_port",port);
 			req.attributes.set("is_secure",isSecure_);
 
-			promise_.resolve(req,res);
+			cb_.resolve(req,res);
 		})
-		.otherwise( [this] (const std::exception& ex) 
+		.otherwise( [this] (const std::exception_ptr& ex) 
 		{
-			 promise_.reject(ex);
+			 cb_.reject(ex);
 		});
     }
     catch( repro::Ex& ex)
@@ -86,11 +88,11 @@ void http_server::onAccept2(Connection::Ptr client, int port)
 			req.attributes.set("server_port",port);
 			req.attributes.set("is_secure",isSecure_);
 
-			promise_.resolve(req,res);
+			cb_.resolve(req,res);
 		})
-		.otherwise( [this] (const std::exception& ex) 
+		.otherwise( [this] (const std::exception_ptr& ex) 
 		{
-			 promise_.reject(ex);
+			 cb_.reject(ex);
 		});
     }
     catch( repro::Ex& ex)

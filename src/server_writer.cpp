@@ -26,7 +26,7 @@ repro::Future<> HttpPlainBodyWriter::flush()
 		con_->onResponseComplete("");
 		p.resolve();
 	})
-	.otherwise( [this,p](const std::exception& ex)
+	.otherwise( [this,p](const std::exception_ptr& ex)
 	{
 		con_->onRequestError(ex);
 		p.resolve();
@@ -127,7 +127,7 @@ void HttpChunkedBodyWriter::chunkResponse()
 		chunkResponse();
 		return;
 	})
-	.otherwise( [this](const std::exception& ex)
+	.otherwise( [this](const std::exception_ptr& ex)
 	{
 		con_->onRequestError(ex);
 	});

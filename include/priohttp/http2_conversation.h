@@ -12,13 +12,9 @@ class Http2Conversation : public Conversation, public std::enable_shared_from_th
 friend class http2_session;
 public:
 
-	LITTLE_MOLE_MONITOR(Http2Conversations);
-
 	typedef std::shared_ptr<Http2Conversation> Ptr;
-	typedef repro::Promise<Request&,Response&> PromiseType;
-	typedef repro::Future<Request&,Response&> FutureType;
 
-	static FutureType on(Connection::Ptr client);
+	static prio::Callback<Request&,Response&>&  on(Connection::Ptr client);
 
     ~Http2Conversation();
 
@@ -26,7 +22,7 @@ public:
     virtual void onCompletion(std::function<void(Request& req, Response& res)> f, Response& res);
 	virtual void onFlushHeaders(std::function<repro::Future<>(Request& req, Response& res)> f, Response& res);
 	virtual void chunk(const std::string& ch);
-	virtual void onRequestError(const std::exception& s);	
+	virtual void onRequestError(const std::exception_ptr& s);	
 	virtual bool keepAlive();
 	virtual Connection::Ptr con();
 	virtual void resolve(Request& req, Response& res);
@@ -43,7 +39,8 @@ private:
 	Http2Conversation& operator=(Http2Conversation&& rhs) = delete;
 
 	Connection::Ptr con_;
-	PromiseType promise_;
+	//PromiseType promise_;
+	prio::Callback<Request&,Response&> cb_;
 
     Ptr self_;
     

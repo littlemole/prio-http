@@ -145,7 +145,7 @@ void ClientHttpReader::read()
 	{
 		consume(s);
 	})
-	.otherwise( [this](const std::exception& ex)
+	.otherwise( [this](const std::exception_ptr& ex)
 	{
 		con_->onRequestError(ex);
 	});
@@ -203,9 +203,9 @@ void ClientHttpHeaderReader::parseHeaders()
 		}
 		con_->onHeadersComplete(body_stream_);
 	}
-	catch(const std::exception& ex)
+	catch(...)
 	{
-		con_->onRequestError(ex);
+		con_->onRequestError(std::current_exception());
 	}
 }
 
@@ -444,18 +444,18 @@ HttpClientConversation::HttpClientConversation(Connection::Ptr client,Request& r
 	: req(req),
 	  res(0),
 	  con_(client),
-	  promise_(repro::promise<Request&,Response&>()),
 	  keep_alive_(false)
 {
 	reader_.reset( new ClientHttpHeaderReader(this));
-
+	REPRO_MONITOR_INCR(HttpCLientConversation);
 }
  
 HttpClientConversation::~HttpClientConversation()
 {
+	REPRO_MONITOR_DECR(HttpCLientConversation);
 }
 
-HttpClientConversation::FutureType HttpClientConversation::on(Connection::Ptr client,Request& req)
+prio::Callback<Request&,Response&>& HttpClientConversation::on(Connection::Ptr client,Request& req)
 {
 	auto con = new HttpClientConversation(client,req);
 	auto r = Ptr(con);
@@ -466,12 +466,12 @@ HttpClientConversation::FutureType HttpClientConversation::on(Connection::Ptr cl
 	{
 		con->reader_->consume("");
 	})
-	.otherwise( [con](const std::exception& ex)
+	.otherwise( [con](const std::exception_ptr& ex)
 	{
 		con->onRequestError(ex);
 	});
 
-	return r->promise_.future();
+	return r->cb_;//r->promise_.future();
 }
 
 
@@ -515,7 +515,7 @@ void HttpClientConversation::onResponseComplete(const std::string& b)
 {
 	res.body( b );
 
-	promise_.resolve(req,res);
+	cb_.resolve(req,res);
 
 	((HttpRequest&)req).reset();
 	((HttpResponse&)res).reset();
@@ -525,9 +525,9 @@ void HttpClientConversation::onResponseComplete(const std::string& b)
 	self_.reset();
 }
 
-void HttpClientConversation::onRequestError(const std::exception& ex)
+void HttpClientConversation::onRequestError(const std::exception_ptr& ex)
 {
-	promise_.reject(ex);
+	cb_.reject(ex);
 	self_.reset();
 }
 
@@ -546,7 +546,7 @@ repro::Future<std::string> HttpClientConversation::read()
 	{
 		p.resolve(s);
 	})
-	.otherwise([p](const std::exception& ex)
+	.otherwise([p](const std::exception_ptr& ex)
 	{
 		p.reject(ex);
 	});
@@ -563,7 +563,7 @@ repro::Future<> HttpClientConversation::write(const std::string& s)
 	{
 		p.resolve();
 	})
-	.otherwise([p](const std::exception& ex)
+	.otherwise([p](const std::exception_ptr& ex)
 	{
 		p.reject(ex);
 	});
@@ -585,17 +585,19 @@ Connection::Ptr HttpClientConversation::con()
 Http2ClientConversation::Http2ClientConversation(Connection::Ptr client,Request& req)
 	: req(req),
 	con_(client),
-	promise_(repro::promise<Request&,Response&>()),
+	//promise_(repro::promise<Request&,Response&>()),
 	keep_alive_(false),
 	http2_(new http2_client_session(this))
 {
+	REPRO_MONITOR_INCR(Http2CLientConversation);
 }
 
 Http2ClientConversation::~Http2ClientConversation()
 {
+	REPRO_MONITOR_DECR(Http2CLientConversation);
 }
 
-Http2ClientConversation::FutureType Http2ClientConversation::on(Connection::Ptr client,Request& req)
+prio::Callback<Request&,Response&>& Http2ClientConversation::on(Connection::Ptr client,Request& req)
 {
 	auto con = new Http2ClientConversation(client,req);
 	auto r = Ptr(con);
@@ -613,17 +615,17 @@ Http2ClientConversation::FutureType Http2ClientConversation::on(Connection::Ptr 
     {
 		r->schedule_read();
     })
-    .otherwise([r](const std::exception& ex)
+    .otherwise([r](const std::exception_ptr& ex)
 	{
 		r->onRequestError(ex);
 	});     
 
-	return r->promise_.future();
+	return r->cb_;//r->promise_.future();
 }
 
 void Http2ClientConversation::resolve(Request& req, Response& res)
 { 	
-    promise_.resolve(req,res);
+    cb_.resolve(req,res);
 }
 
 void Http2ClientConversation::schedule_read()
@@ -639,7 +641,7 @@ void Http2ClientConversation::schedule_read()
     {
         ptr->schedule_read();
     })
-    .otherwise([ptr](const std::exception& ex)
+    .otherwise([ptr](const std::exception_ptr& ex)
 	{
 		ptr->onRequestError(ex);
 	}); 
@@ -695,9 +697,9 @@ void Http2ClientConversation::onResponseComplete(const std::string& b)
 }
 */
 
-void Http2ClientConversation::onRequestError(const std::exception& ex)
+void Http2ClientConversation::onRequestError(const std::exception_ptr& ex)
 {
-	promise_.reject(ex);
+	cb_.reject(ex);
 	self_.reset();
 }
 

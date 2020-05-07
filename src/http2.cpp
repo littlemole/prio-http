@@ -155,7 +155,8 @@ Future<> http2_session::send()
     ssize_t rv = nghttp2_session_mem_send(session_, &data_ptr);
     if(rv==0)
     {
-        return resolved();
+        return p.resolved();
+//        return resolved();
     }
 
     while(rv>0)
@@ -167,19 +168,19 @@ Future<> http2_session::send()
     if(rv<0)
     {
         repro::Ex ex("err http2_server_session::send() ");
-        return rejected(p,ex);
+        return p.rejected(ex);
     }
 
     std::string tmp = oss.str();
     if(tmp.empty())
-        return resolved();
+        return p.resolved();
 
     con_->con()->write(tmp)
     .then([p](Connection::Ptr)
     {
        p.resolve();
     })
-    .otherwise([p](const std::exception& ex)
+    .otherwise([p](const std::exception_ptr& ex)
     {
         p.reject(ex);
     });   
@@ -198,7 +199,7 @@ Future<> http2_session::recv(const std::string& s)
     if (readlen < 0) 
     {
         repro::Ex ex("http2_server_session::recv");
-        return rejected(p,ex);
+        return p.rejected(ex);
     }
     
     send()
@@ -206,7 +207,7 @@ Future<> http2_session::recv(const std::string& s)
     {
         p.resolve();
     })
-    .otherwise([p](const std::exception& ex)
+    .otherwise([p](const std::exception_ptr& ex)
     {
         p.reject(ex);
     });

@@ -15,16 +15,14 @@ class HttpClientConversation : public ReaderWriterConversation, public std::enab
 {
 public:
 
-	LITTLE_MOLE_MONITOR(HttpClientConversation);
-
 	typedef std::shared_ptr<HttpClientConversation> Ptr;
-	typedef repro::Promise<Request&,Response&> PromiseType;
-	typedef repro::Future<Request&,Response&> FutureType;
+//	typedef repro::Promise<Request&,Response&> PromiseType;
+//	typedef repro::Future<Request&,Response&> FutureType;
 
 	Request req;
 	Response res;
 
-	static FutureType on(Connection::Ptr client, Request& r);
+	static prio::Callback<Request&,Response&>& on(Connection::Ptr client, Request& r);
 
     ~HttpClientConversation();
 
@@ -36,7 +34,7 @@ public:
 	virtual void onHeadersComplete(const std::string& s);
 	virtual void onRequestComplete(const std::string& s);
 	virtual void onResponseComplete(const std::string& s);
-	virtual void onRequestError(const std::exception& s);
+	virtual void onRequestError(const std::exception_ptr& s);
 	virtual Request& request() { return req; }
 	virtual Response& response() { return res; }
 
@@ -57,14 +55,17 @@ public:
 	{
 		return keep_alive_;
 	}
+
 private:
+
+	prio::Callback<Request&,Response&> cb_;
 
 	HttpClientConversation(Connection::Ptr client, Request& r);
 
 	void read_channel();
 
 	Connection::Ptr con_;
-	PromiseType promise_;
+	//PromiseType promise_;
 	std::function<void(const std::string& s)> status_func_;
 
 
@@ -80,17 +81,14 @@ class Http2ClientConversation : public Conversation, public std::enable_shared_f
 {
 public:
 
-	LITTLE_MOLE_MONITOR(Http2ClientConversation);
-
-
 	typedef std::shared_ptr<Http2ClientConversation> Ptr;
-	typedef repro::Promise<Request&,Response&> PromiseType;
-	typedef repro::Future<Request&,Response&> FutureType;
+	//typedef repro::Promise<Request&,Response&> PromiseType;
+	//typedef repro::Future<Request&,Response&> FutureType;
 
 	Request req;
 	//Response res;
 
-	static FutureType on(Connection::Ptr client, Request& r);
+	static prio::Callback<Request&,Response&>& on(Connection::Ptr client, Request& r);
 
     ~Http2ClientConversation();
 
@@ -99,7 +97,7 @@ public:
 
 	virtual Connection::Ptr con();
 
-	virtual void onRequestError(const std::exception& s);
+	virtual void onRequestError(const std::exception_ptr& s);
 	virtual repro::Future<> flush(Response& res) 
 	{
 		auto p = repro::promise();
@@ -121,12 +119,14 @@ public:
 
 private:
 
+	prio::Callback<Request&,Response&> cb_;
+
 	Http2ClientConversation(Connection::Ptr client, Request& r);
 
 	void schedule_read();
 
 	Connection::Ptr con_;
-	PromiseType promise_;
+	//PromiseType promise_;
 	std::function<void(const std::string& s)> status_func_;
 
 	bool keep_alive_;

@@ -86,7 +86,7 @@ public:
 		responseComplete(s);
 	}
 
-	virtual void onRequestError(const std::exception& s)
+	virtual void onRequestError(const std::exception_ptr& s)
 	{
 		isError = true;
 	}
