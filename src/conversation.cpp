@@ -275,6 +275,10 @@ prio::Callback<Request&,Response&>& SubRequest::on(const Request& request, const
 	return cb_;// promise_.future();
 }
 
+std::string SubRequest::common_name()
+{
+	return "";
+}
 
 void SubRequest::resolve(Request& req, Response& res)
 { 

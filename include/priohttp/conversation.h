@@ -136,6 +136,7 @@ public:
 	virtual void onRequestError(const std::exception_ptr& s);
 	virtual void resolve(Request& req, Response& res);
 	
+	virtual std::string common_name() ;
 private:
 
 	SubRequest(const SubRequest& rhs) = delete;
