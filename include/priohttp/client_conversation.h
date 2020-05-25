@@ -56,6 +56,8 @@ public:
 		return keep_alive_;
 	}
 
+	virtual std::string common_name();
+	
 private:
 
 	prio::Callback<Request&,Response&> cb_;
@@ -116,6 +118,8 @@ public:
 	}
 
 	void resolve(Request& req, Response& res);
+
+	virtual std::string common_name();
 
 private:
 

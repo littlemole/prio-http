@@ -111,6 +111,12 @@ std::string Request::toString()
 	return oss.str();
 }
 
+std::string Request::common_name()
+{
+	if(!con_) return "";
+
+	return con_->common_name();
+}
 
 
 

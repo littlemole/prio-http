@@ -27,6 +27,11 @@ Http2Conversation::~Http2Conversation()
     REPRO_MONITOR_DECR(Http2Conversation);    
 }
 
+std::string Http2Conversation::common_name()
+{
+	return con_->common_name();
+}
+
 prio::Callback<Request&,Response&>& Http2Conversation::on(Connection::Ptr s)
 {
 	auto r =  Ptr( new Http2Conversation(s));

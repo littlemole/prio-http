@@ -244,6 +244,11 @@ bool HttpConversation::keepAlive()
 	return keep_alive_;
 }
 
+std::string HttpConversation::common_name()
+{
+	return con_->common_name();
+}
+
 
 ////////////////
 

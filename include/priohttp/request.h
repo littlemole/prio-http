@@ -55,6 +55,8 @@ public:
     //! get request param by string
     std::string operator[](const std::string& s);
     
+    std::string common_name();
+    
 protected:
 
     Conversation* con_;

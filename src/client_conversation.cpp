@@ -475,6 +475,10 @@ prio::Callback<Request&,Response&>& HttpClientConversation::on(Connection::Ptr c
 }
 
 
+std::string HttpClientConversation::common_name()
+{
+	return con_->common_name();
+}
 
 
 void HttpClientConversation::onHeadersComplete(const std::string& b)
@@ -595,6 +599,11 @@ Http2ClientConversation::Http2ClientConversation(Connection::Ptr client,Request&
 Http2ClientConversation::~Http2ClientConversation()
 {
 	REPRO_MONITOR_DECR(Http2CLientConversation);
+}
+
+std::string Http2ClientConversation::common_name()
+{
+	return con_->common_name();
 }
 
 prio::Callback<Request&,Response&>& Http2ClientConversation::on(Connection::Ptr client,Request& req)

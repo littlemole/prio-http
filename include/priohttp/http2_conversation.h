@@ -27,6 +27,8 @@ public:
 	virtual Connection::Ptr con();
 	virtual void resolve(Request& req, Response& res);
 
+	virtual std::string common_name();
+
 private:
 
     void schedule_read();

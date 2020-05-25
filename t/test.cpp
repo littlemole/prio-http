@@ -797,6 +797,7 @@ TEST_F(BasicTest, SimpleSSLRequest)
 		server_ctx.load_cert_pem("pem/server.pem");
 
 		SslCtx client_ctx;
+		client_ctx.set_ca_path("pem/ca.crt");
 		
 #ifndef _WIN32
 		signal(SIGPIPE).then([](int s) {});
@@ -1006,6 +1007,7 @@ TEST_F(BasicTest, SimpleHttp2SSLRequest)
 		server_ctx.enableHttp2();
 
 		Http2SslCtx client_ctx;
+		client_ctx.set_ca_path("pem/ca.crt");
 		client_ctx.enableHttp2Client();
 		
 #ifndef _WIN32

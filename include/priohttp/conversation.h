@@ -30,6 +30,7 @@ public:
 	virtual prio::Connection::Ptr con() = 0;
 	virtual void onRequestError(const std::exception_ptr& s)  = 0;
 	virtual void resolve(Request& req, Response& res) = 0;
+	virtual std::string common_name() = 0;
 };
  
 class ReaderWriterConversation 
@@ -82,7 +83,9 @@ public:
 	virtual repro::Future<std::string> read();
 	virtual repro::Future<> write(const std::string& s);
 	virtual void resolve(Request& req, Response& res);
-	
+
+	virtual std::string common_name() ;
+
 private:
 
 	HttpConversation(Connection::Ptr f);
