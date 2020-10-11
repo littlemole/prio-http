@@ -14,8 +14,8 @@ ENV BUILDCHAIN=${BUILDCHAIN}
 ARG TS=
 ENV TS=${TS}
 
-RUN BRANCH=ng /usr/local/bin/install.sh repro 
-RUN BRANCH=ng /usr/local/bin/install.sh prio 
+RUN /usr/local/bin/install.sh repro 
+RUN /usr/local/bin/install.sh prio 
 
 RUN mkdir -p /usr/local/src/priohttp
 ADD . /usr/local/src/priohttp
