@@ -91,12 +91,12 @@ repro::Future<> Http2Conversation::flush(Response& res)
     }
  
     auto stream = s->shared_from_this();
-    //auto ptr = shared_from_this();
+    auto ptr = shared_from_this();
 
 	stream->flusheaders_func(stream->req,res)
-	.then( [this,p,stream,stream_id,&res]()
+	.then( [ptr,p,stream,stream_id,&res]()
 	{
-        auto s = http2_->flush(res);
+        auto s = ptr->http2_->flush(res);
         if(!s)
         {
             std::cout << "stream id went away " << stream_id << std::endl;
@@ -105,8 +105,8 @@ repro::Future<> Http2Conversation::flush(Response& res)
             return;
         }
 
-        http2_->send()
-        .then([this,p,stream]()
+        ptr->http2_->send()
+        .then([ptr,p,stream]()
         {
             if(stream->completion_func)
             {
@@ -115,7 +115,7 @@ repro::Future<> Http2Conversation::flush(Response& res)
         
             if(stream->req.detached())
             {
-                self_.reset();
+                ptr->self_.reset();
                 stream->reset_callbacks();
                 p.resolve();
                 return;
@@ -124,9 +124,9 @@ repro::Future<> Http2Conversation::flush(Response& res)
             p.resolve();
             stream->reset();        
         })
-        .otherwise([this,p,stream](const std::exception_ptr& ex)
+        .otherwise([ptr,p,stream](const std::exception_ptr& ex)
         {
-            onRequestError(ex);
+            ptr->onRequestError(ex);
             stream->reset();     
             p.resolve();
         });    
