@@ -156,7 +156,6 @@ Future<> http2_session::send()
     if(rv==0)
     {
         return p.resolved();
-//        return resolved();
     }
 
     while(rv>0)
