@@ -471,7 +471,7 @@ prio::Callback<Request&,Response&>& HttpClientConversation::on(Connection::Ptr c
 		con->onRequestError(ex);
 	});
 
-	return r->cb_;//r->promise_.future();
+	return r->cb_;
 }
 
 
@@ -589,7 +589,6 @@ Connection::Ptr HttpClientConversation::con()
 Http2ClientConversation::Http2ClientConversation(Connection::Ptr client,Request& req)
 	: req(req),
 	con_(client),
-	//promise_(repro::promise<Request&,Response&>()),
 	keep_alive_(false),
 	http2_(new http2_client_session(this))
 {
@@ -629,7 +628,7 @@ prio::Callback<Request&,Response&>& Http2ClientConversation::on(Connection::Ptr 
 		r->onRequestError(ex);
 	});     
 
-	return r->cb_;//r->promise_.future();
+	return r->cb_;/
 }
 
 void Http2ClientConversation::resolve(Request& req, Response& res)
@@ -656,62 +655,11 @@ void Http2ClientConversation::schedule_read()
 	}); 
 }
 
-/*
-void Http2ClientConversation::onHeadersComplete(const std::string& b)
-{
-	bool readBody = res.isChunked() || res.size() > 0;
-	if(readBody)
-	{
-		std::string s = b;
-
-		ClientHttpReader* r = nullptr;
-		if ( res.isGzipped())
-		{
-			r = new HttpClientGzippedBodyReader(this);
-		}
-		else
-		{
-			r = new HttpClientPlainBodyReader(this);
-		}
-
-		if(res.isChunked())
-		{
-			reader_.reset( new HttpClientChunkedBodyReader(r));
-		}
-		else
-		{
-			reader_.reset( new HttpClientContentLengthBodyReader(r));
-		}
-		reader_->consume(s);
-	}
-	else
-	{
-		onResponseComplete(b);
-	}
-}
-
-
-void Http2ClientConversation::onResponseComplete(const std::string& b)
-{
-	res.body( b );
-
-	promise_.resolve(req,res);
-
-	((HttpRequest&)req).reset();
-	((HttpResponse&)res).reset();
-
-	con_->close();
-
-	self_.reset();
-}
-*/
-
 void Http2ClientConversation::onRequestError(const std::exception_ptr& ex)
 {
 	cb_.reject(ex);
 	self_.reset();
 }
-
 
 
 Connection::Ptr Http2ClientConversation::con()

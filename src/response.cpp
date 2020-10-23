@@ -285,7 +285,6 @@ void HttpResponse::flushHeaders()
     }
 
     headersSent_ = true;
- //   onFlushHeaders_();
 }
 
 HttpResponse& HttpResponse::reset()

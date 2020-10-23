@@ -16,8 +16,6 @@ class HttpClientConversation : public ReaderWriterConversation, public std::enab
 public:
 
 	typedef std::shared_ptr<HttpClientConversation> Ptr;
-//	typedef repro::Promise<Request&,Response&> PromiseType;
-//	typedef repro::Future<Request&,Response&> FutureType;
 
 	Request req;
 	Response res;
@@ -67,7 +65,6 @@ private:
 	void read_channel();
 
 	Connection::Ptr con_;
-	//PromiseType promise_;
 	std::function<void(const std::string& s)> status_func_;
 
 
@@ -84,11 +81,8 @@ class Http2ClientConversation : public Conversation, public std::enable_shared_f
 public:
 
 	typedef std::shared_ptr<Http2ClientConversation> Ptr;
-	//typedef repro::Promise<Request&,Response&> PromiseType;
-	//typedef repro::Future<Request&,Response&> FutureType;
 
 	Request req;
-	//Response res;
 
 	static prio::Callback<Request&,Response&>& on(Connection::Ptr client, Request& r);
 
@@ -130,7 +124,6 @@ private:
 	void schedule_read();
 
 	Connection::Ptr con_;
-	//PromiseType promise_;
 	std::function<void(const std::string& s)> status_func_;
 
 	bool keep_alive_;

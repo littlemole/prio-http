@@ -14,9 +14,7 @@ namespace prio  {
 
 
 Http2Conversation::Http2Conversation(Connection::Ptr f)
-	: 
-	  con_(f),
-	 // promise_(repro::promise<Request&,Response&>()),
+	: con_(f),
       http2_(std::make_unique<http2_server_session>(this))
 {
     REPRO_MONITOR_INCR(Http2Conversation);    
@@ -49,7 +47,7 @@ prio::Callback<Request&,Response&>& Http2Conversation::on(Connection::Ptr s)
 		r->onRequestError(ex);
 	});     
     
-	return r->cb_;//r->promise_.future();
+	return r->cb_;
 }
 
 void Http2Conversation::schedule_read()

@@ -41,7 +41,6 @@ private:
 	Http2Conversation& operator=(Http2Conversation&& rhs) = delete;
 
 	Connection::Ptr con_;
-	//PromiseType promise_;
 	prio::Callback<Request&,Response&> cb_;
 
     Ptr self_;

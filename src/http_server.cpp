@@ -11,16 +11,14 @@ namespace prio  {
 
 
 http_server::http_server()
- : //promise_(repro::promise<Request&,Response&>()), 
- 	isSecure_(false)
+ : isSecure_(false)
 {
 	listener_ = std::make_shared<Listener>();
 }
 
 
 http_server::http_server(prio::SslCtx& ctx)
- : //promise_(repro::promise<Request&,Response&>()), 
- 	isSecure_(true)
+ : isSecure_(true)
 {
 	listener_ = std::make_shared<Listener>(ctx);	
 }

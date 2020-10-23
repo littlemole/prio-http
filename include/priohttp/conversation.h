@@ -56,8 +56,6 @@ class HttpConversation : public Conversation, public ReaderWriterConversation, p
 public:
 
 	typedef std::shared_ptr<HttpConversation> Ptr;
-	//typedef repro::Promise<Request&,Response&> PromiseType;
-	//typedef repro::Future<Request&,Response&> FutureType;
 
 	Request req;
 	Response res;
@@ -96,7 +94,6 @@ private:
 	HttpConversation& operator=(HttpConversation&& rhs) = delete;
 
 	Connection::Ptr con_;
-	//PromiseType promise_;
 	prio::Callback<Request&,Response&> cb_;
 
 	bool keep_alive_;
@@ -115,8 +112,6 @@ class SubRequest : public Conversation, public std::enable_shared_from_this<SubR
 public:
 
 	typedef std::shared_ptr<SubRequest> Ptr;
-	//typedef repro::Promise<Request&,Response&> PromiseType;
-	//typedef repro::Future<Request&,Response&> FutureType;
 
 	Request req;
 	Response res;
@@ -144,7 +139,6 @@ private:
 	SubRequest& operator=(const SubRequest& rhs) = delete;
 	SubRequest& operator=(SubRequest&& rhs) = delete;
 
-	//PromiseType promise_;
 	prio::Callback<Request&,Response&> cb_;
 
 	std::function<repro::Future<>(Request& req, Response& res)> flusheaders_func_;

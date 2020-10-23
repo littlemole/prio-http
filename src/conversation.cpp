@@ -19,7 +19,6 @@ HttpConversation::HttpConversation(Connection::Ptr f)
 	: req(this),
 	  res(this),
 	  con_(f),
-	  //promise_(repro::promise<Request&,Response&>()),
 	  keep_alive_(false),
 	  flusheaders_func_( [](Request&,Response&)
 	  {
@@ -51,7 +50,7 @@ prio::Callback<Request&,Response&>&  HttpConversation::on(Connection::Ptr s)
 
 	r->reader_->consume("");
 
-	return r->cb_;//promise_.future();
+	return r->cb_;
 }
 
 
@@ -256,7 +255,6 @@ std::string HttpConversation::common_name()
 SubRequest::SubRequest()
 	: req(this),
 	  res(this),
-	  //promise_(repro::promise<Request&,Response&>()),
 	  completion_func_( [](Request&,Response&){})
 {
 }
@@ -272,7 +270,7 @@ prio::Callback<Request&,Response&>& SubRequest::on(const Request& request, const
 	req.path.path(path);
 	self_ = shared_from_this();
 
-	return cb_;// promise_.future();
+	return cb_;
 }
 
 std::string SubRequest::common_name()
