@@ -1,5 +1,6 @@
 <map id="prio::Request" name="prio::Request">
-<area shape="rect" id="node2" href="$classprio_1_1Attributes.html" title="Generic Attributes. " alt="" coords="5,5,112,32"/>
-<area shape="rect" id="node3" href="$classprio_1_1Headers.html" title="Header class. " alt="" coords="137,5,237,32"/>
-<area shape="rect" id="node4" href="$classprio_1_1PathInfo.html" title="HTTP Path information. " alt="" coords="261,5,361,32"/>
+<area shape="rect" id="node1" title="HTTP Request." alt="" coords="149,95,257,121"/>
+<area shape="rect" id="node2" href="$classprio_1_1Attributes.html" title="Generic Attributes." alt="" coords="5,5,124,32"/>
+<area shape="rect" id="node3" href="$classprio_1_1Headers.html" title="Header class." alt="" coords="149,5,258,32"/>
+<area shape="rect" id="node4" href="$classprio_1_1PathInfo.html" title="HTTP Path information." alt="" coords="283,5,391,32"/>
 </map>

@@ -1,14 +1,15 @@
 <map id="include/priohttp/arg.h" name="include/priohttp/arg.h">
-<area shape="rect" id="node2" href="$path_8h.html" title="include/priohttp/path.h" alt="" coords="245,80,396,107"/>
-<area shape="rect" id="node3" href="$request_8h.html" title="include/priohttp/request.h" alt="" coords="293,155,461,181"/>
-<area shape="rect" id="node4" href="$multipart_8h_source.html" title="include/priohttp/multipart.h" alt="" coords="189,229,364,256"/>
-<area shape="rect" id="node5" href="$response_8h.html" title="include/priohttp/response.h" alt="" coords="389,229,567,256"/>
-<area shape="rect" id="node6" href="$client_8h_source.html" title="include/priohttp/client.h" alt="" coords="5,311,161,338"/>
-<area shape="rect" id="node7" href="$conversation_8h_source.html" title="include/priohttp/conversation.h" alt="" coords="185,311,384,338"/>
-<area shape="rect" id="node9" href="$http2__client_8h_source.html" title="include/priohttp/http2\l_client.h" alt="" coords="380,393,523,435"/>
-<area shape="rect" id="node11" href="$http2_8h_source.html" title="include/priohttp/http2.h" alt="" coords="458,311,613,338"/>
-<area shape="rect" id="node12" href="$reader_8h_source.html" title="include/priohttp/server\l/reader.h" alt="" coords="637,304,788,345"/>
-<area shape="rect" id="node13" href="$writer_8h_source.html" title="include/priohttp/server\l/writer.h" alt="" coords="812,304,963,345"/>
-<area shape="rect" id="node8" href="$client__conversation_8h_source.html" title="include/priohttp/client\l_conversation.h" alt="" coords="44,393,189,435"/>
-<area shape="rect" id="node10" href="$http2__conversation_8h_source.html" title="include/priohttp/http2\l_conversation.h" alt="" coords="213,393,356,435"/>
+<area shape="rect" id="node1" title=" " alt="" coords="337,5,498,32"/>
+<area shape="rect" id="node2" href="$path_8h.html" title=" " alt="" coords="271,80,441,107"/>
+<area shape="rect" id="node3" href="$request_8h.html" title=" " alt="" coords="323,155,512,181"/>
+<area shape="rect" id="node4" href="$multipart_8h_source.html" title=" " alt="" coords="207,229,407,256"/>
+<area shape="rect" id="node5" href="$response_8h.html" title=" " alt="" coords="430,229,629,256"/>
+<area shape="rect" id="node6" href="$client_8h_source.html" title=" " alt="" coords="5,311,181,338"/>
+<area shape="rect" id="node7" href="$conversation_8h_source.html" title=" " alt="" coords="205,311,429,338"/>
+<area shape="rect" id="node9" href="$http2__client_8h_source.html" title=" " alt="" coords="423,393,585,435"/>
+<area shape="rect" id="node11" href="$http2_8h_source.html" title=" " alt="" coords="505,311,679,338"/>
+<area shape="rect" id="node12" href="$reader_8h_source.html" title=" " alt="" coords="703,304,873,345"/>
+<area shape="rect" id="node13" href="$writer_8h_source.html" title=" " alt="" coords="897,304,1066,345"/>
+<area shape="rect" id="node8" href="$client__conversation_8h_source.html" title=" " alt="" coords="47,393,211,435"/>
+<area shape="rect" id="node10" href="$http2__conversation_8h_source.html" title=" " alt="" coords="236,393,399,435"/>
 </map>

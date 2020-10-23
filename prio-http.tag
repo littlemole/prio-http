@@ -3,26 +3,36 @@
   <compound kind="file">
     <name>arg.h</name>
     <path>/home/mike/workspace/prio-http/include/priohttp/</path>
-    <filename>arg_8h</filename>
+    <filename>arg_8h.html</filename>
+    <includes id="common_8h" name="common.h" local="yes" imported="no">priohttp/common.h</includes>
     <class kind="class">prio::Args</class>
   </compound>
   <compound kind="file">
     <name>attr.h</name>
     <path>/home/mike/workspace/prio-http/include/priohttp/</path>
-    <filename>attr_8h</filename>
+    <filename>attr_8h.html</filename>
+    <includes id="common_8h" name="common.h" local="yes" imported="no">priohttp/common.h</includes>
     <class kind="class">prio::Attributes</class>
+  </compound>
+  <compound kind="file">
+    <name>common.h</name>
+    <path>/home/mike/workspace/prio-http/include/priohttp/</path>
+    <filename>common_8h.html</filename>
+    <class kind="class">prio::Http2SslCtx</class>
   </compound>
   <compound kind="file">
     <name>cookie.h</name>
     <path>/home/mike/workspace/prio-http/include/priohttp/</path>
-    <filename>cookie_8h</filename>
+    <filename>cookie_8h.html</filename>
+    <includes id="common_8h" name="common.h" local="yes" imported="no">priohttp/common.h</includes>
     <class kind="class">prio::Cookie</class>
     <class kind="class">prio::Cookies</class>
   </compound>
   <compound kind="file">
     <name>header.h</name>
     <path>/home/mike/workspace/prio-http/include/priohttp/</path>
-    <filename>header_8h</filename>
+    <filename>header_8h.html</filename>
+    <includes id="common_8h" name="common.h" local="yes" imported="no">priohttp/common.h</includes>
     <includes id="cookie_8h" name="cookie.h" local="yes" imported="no">priohttp/cookie.h</includes>
     <class kind="class">prio::HeaderValue</class>
     <class kind="class">prio::HeaderValues</class>
@@ -31,7 +41,8 @@
   <compound kind="file">
     <name>path.h</name>
     <path>/home/mike/workspace/prio-http/include/priohttp/</path>
-    <filename>path_8h</filename>
+    <filename>path_8h.html</filename>
+    <includes id="common_8h" name="common.h" local="yes" imported="no">priohttp/common.h</includes>
     <includes id="arg_8h" name="arg.h" local="yes" imported="no">priohttp/arg.h</includes>
     <includes id="queryparams_8h" name="queryparams.h" local="yes" imported="no">priohttp/queryparams.h</includes>
     <class kind="class">prio::PathInfo</class>
@@ -39,13 +50,15 @@
   <compound kind="file">
     <name>queryparams.h</name>
     <path>/home/mike/workspace/prio-http/include/priohttp/</path>
-    <filename>queryparams_8h</filename>
+    <filename>queryparams_8h.html</filename>
+    <includes id="common_8h" name="common.h" local="yes" imported="no">priohttp/common.h</includes>
     <class kind="class">prio::QueryParams</class>
   </compound>
   <compound kind="file">
     <name>request.h</name>
     <path>/home/mike/workspace/prio-http/include/priohttp/</path>
-    <filename>request_8h</filename>
+    <filename>request_8h.html</filename>
+    <includes id="common_8h" name="common.h" local="yes" imported="no">priohttp/common.h</includes>
     <includes id="arg_8h" name="arg.h" local="yes" imported="no">priohttp/arg.h</includes>
     <includes id="path_8h" name="path.h" local="yes" imported="no">priohttp/path.h</includes>
     <includes id="header_8h" name="header.h" local="yes" imported="no">priohttp/header.h</includes>
@@ -56,7 +69,7 @@
   <compound kind="file">
     <name>response.h</name>
     <path>/home/mike/workspace/prio-http/include/priohttp/</path>
-    <filename>response_8h</filename>
+    <filename>response_8h.html</filename>
     <includes id="request_8h" name="request.h" local="yes" imported="no">priohttp/request.h</includes>
     <includes id="header_8h" name="header.h" local="yes" imported="no">priohttp/header.h</includes>
     <class kind="class">prio::Response</class>
@@ -64,7 +77,8 @@
   <compound kind="file">
     <name>urlencode.h</name>
     <path>/home/mike/workspace/prio-http/include/priohttp/</path>
-    <filename>urlencode_8h</filename>
+    <filename>urlencode_8h.html</filename>
+    <includes id="common_8h" name="common.h" local="yes" imported="no">priohttp/common.h</includes>
     <class kind="class">prio::Urlencode</class>
   </compound>
   <compound kind="class">
@@ -761,6 +775,13 @@
     </member>
     <member kind="function">
       <type>Response &amp;</type>
+      <name>redirect</name>
+      <anchorfile>classprio_1_1Response.html</anchorfile>
+      <anchor>af3333b98f39eec288c53085c4bf8dc74</anchor>
+      <arglist>(Request &amp;req, const std::string &amp;s, int code=302)</arglist>
+    </member>
+    <member kind="function">
+      <type>Response &amp;</type>
       <name>gzip</name>
       <anchorfile>classprio_1_1Response.html</anchorfile>
       <anchor>a321e273fe336ee8019442c26fed2e41a</anchor>
@@ -816,10 +837,10 @@
       <arglist>(const std::string &amp;ch)</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
+      <type>repro::Future</type>
       <name>flush</name>
       <anchorfile>classprio_1_1Response.html</anchorfile>
-      <anchor>a0602fdb501810fb42fc60358ade5ddcd</anchor>
+      <anchor>a74a7530ad5d85fa0bbfcb5273be6d708</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
