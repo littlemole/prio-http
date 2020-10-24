@@ -628,7 +628,7 @@ prio::Callback<Request&,Response&>& Http2ClientConversation::on(Connection::Ptr 
 		r->onRequestError(ex);
 	});     
 
-	return r->cb_;/
+	return r->cb_;
 }
 
 void Http2ClientConversation::resolve(Request& req, Response& res)

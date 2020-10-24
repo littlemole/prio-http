@@ -24,7 +24,6 @@ QueryParams::QueryParams(const std::string& s)
             std::vector<std::string> p = split(v[i],'=');
             if ( p.size() > 1 )
             {
-                //params_[Urlencode::decode(p[0])] = Urlencode::decode(p[1]);
                 params_.push_back(
                     std::make_pair(
                         Urlencode::decode(p[0]),
